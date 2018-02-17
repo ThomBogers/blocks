@@ -14,7 +14,7 @@ func _ready():
 func hit():
 	print("Got hit")
 	health -= 1
-		
+
 	if health == 0:
 		self.queue_free()
 
