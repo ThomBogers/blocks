@@ -6,8 +6,8 @@ var kubelet = preload("res://scenes/Kubelet/Kubelet.tscn")
 
 func _ready():	
 	# Render grid
-	for i in range(20):
-		for j in range(20):
+	for i in range(-20, 20):
+		for j in range(-20, 20):
 			var kube  = kubelet.instance()
 			
 			

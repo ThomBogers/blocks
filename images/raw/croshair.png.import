@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/croshair.png-07d6fa000d2948643aef7caae4edd46e.stex"
+path="res://.import/croshair.png-3ab016273200dcd21eba19dc37d56de9.stex"
 
 [deps]
 
-source_file="res://images/croshair.png"
-source_md5="b697cff987279f1b021d40dbfdc25105"
+source_file="res://images/raw/croshair.png"
+source_md5="13c8a954b7de2186ef13a1d5c7143d3e"
 
-dest_files=[ "res://.import/croshair.png-07d6fa000d2948643aef7caae4edd46e.stex" ]
-dest_md5="3cf522b6d722cb85f8a5b28cbb0b8b0d"
+dest_files=[ "res://.import/croshair.png-3ab016273200dcd21eba19dc37d56de9.stex" ]
+dest_md5="31f3ba9a905ef8d2ae400d90bbc76466"
 
 [params]
 

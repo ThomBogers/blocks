@@ -9,18 +9,10 @@ var view_sensitivity = 1
 var yaw   = 45
 var pitch = 45
 
-var raycast_from     = null
-var raycast_to       = null
-const ray_length     = 1000
-
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	
-	#var start = Vector3(90,0,0)
-	#camera.rotate(start, 0)
-	#player.rotate(start, 0)
-
 	# Enable processing input
 	set_process_input(true)
 	
@@ -29,18 +21,12 @@ func _ready():
 func _input(event):
 	
 	if event is InputEventMouseMotion:
-		
-		# TODO Misschien position van muis pakken, en dan de camera roteren van af basis orientatie ipv dit?
 		var relative_x = event.relative.x
 		var relative_y = event.relative.y
 		
 		yaw   = fmod(yaw - relative_x * view_sensitivity, 360)
 		pitch = max(min(pitch - relative_y * view_sensitivity, 90), -90)
-		print("Movement", yaw, " : ", pitch)
 		player.set_rotation(Vector3(deg2rad(pitch), deg2rad(yaw),0 ))
-		#var viewport = get_viewport()
-		
-		#viewport.warp_mouse(Vector2(viewport.get_visible_rect().size.x/2,viewport.get_visible_rect().size.y/2))
 
 	
 	if event.is_action_pressed("game_right"):
@@ -74,21 +60,10 @@ func _input(event):
 		movement_vector.y = 0
 	
 	# On click prepare raycast query to be executed in the physics loop
+	# raycast is based on center of screen
 	if event.is_action_pressed("game_click"):
+		camera.cast_ray()
 		
-		raycast_from = camera.project_ray_origin(event.position)
-		raycast_to   = raycast_from + camera.project_ray_normal(event.position) * ray_length
-		
-func _physics_process(delta):
-	if raycast_from != null && raycast_to != null:
-		var space_state = get_world().get_direct_space_state()
-		var result = space_state.intersect_ray(raycast_from, raycast_to, [self])
-		if not result.empty():
-			result.collider.hit()
-				
-		raycast_from = null
-		raycast_to   = null
-	pass
 
 func _process(delta):
 	
