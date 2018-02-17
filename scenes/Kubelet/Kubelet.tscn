@@ -68,7 +68,7 @@ shader_param/uv1_offset = Vector3( 0, 0, 0 )
 shader_param/uv2_scale = Vector3( 1, 1, 1 )
 shader_param/uv2_offset = Vector3( 0, 0, 0 )
 
-[node name="Kubelet" type="StaticBody" index="0"]
+[node name="Kubelet" type="StaticBody"]
 
 input_ray_pickable = true
 input_capture_on_drag = false

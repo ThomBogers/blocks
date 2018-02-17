@@ -9,5 +9,8 @@ It should initially be a minicraft clone, and maybe add cool stuff after?
 ![version 3aa6a67edb5d9ec3932759044aaac8a8f46307d4](docs/3aa6a67edb5d9ec3932759044aaac8a8f46307d4.png)
 
 ## Todo
+ - Large chuck sizes crash the game, chucksize > 13 plummets fps 
+ 	- Maybe only have kubelets in memory, and render a plane of triangle representing everything exposed to air (everything that may be visible)
+ - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
  - Change kubelet shape to d20 die (icosahedron)
  - Add textures to kubelets
