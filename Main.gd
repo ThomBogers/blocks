@@ -13,8 +13,9 @@ func _ready():
 			
 			var size = 2.1
 			var xpos  = size * i
+			var ypos  = 0
 			var zpos  = size * j 
-			var move  = Vector3(xpos, 0, zpos)
+			var move  = Vector3(xpos, ypos, zpos)
 			
 			kube.translate(move)		
 			add_child(kube)
