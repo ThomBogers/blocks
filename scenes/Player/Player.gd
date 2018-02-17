@@ -4,7 +4,7 @@ extends Spatial
 const GRAVITY    = -9.8/2
 const SPEED_JUMP = 2
 const SPEED_WALK = 15
-const SPEED_AIR  = 10
+const SPEED_AIR  = 15
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
@@ -79,12 +79,8 @@ func _physics_process(delta):
 	_v_move(delta)
 
 func _h_move(delta):
-
-	var movement
-	movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
-	movement = movement.rotated(Vector3(1,0,0),deg2rad(pitch))
+	var movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
 	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
-	movement.y = 0 # remove vertical component created by the rotation
 
 	if on_floor:
 		movement = movement * SPEED_WALK * delta
@@ -96,12 +92,12 @@ func _v_move(delta):
 	# Apply gravity every tick
 	movement_vector.y = movement_vector.y + delta*GRAVITY
 
-	var movement
-	movement = Vector3(0, movement_vector.y, 0)
+	var movement = Vector3(0, movement_vector.y, 0)
 	var collision = player.move_and_collide(movement)
 
 	if collision != null and collision.normal.y != 0:
 		on_floor = true
+		movement_vector.y = 0
 
 #func _process(delta):
 #	pass
