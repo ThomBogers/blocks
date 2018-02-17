@@ -1,12 +1,20 @@
 extends Spatial
 
+
+const GRAVITY    = -9.8/2
+const SPEED_JUMP = 2
+const SPEED_WALK = 15
+const SPEED_AIR  = 10
+
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
+
+var on_floor = false
 
 var movement_vector = Vector3(0,0,0)
 var yaw   = 45
 var pitch = 45
-var view_sensitivity = 1
+const view_sensitivity = 1
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
@@ -47,15 +55,9 @@ func _input(event):
 	elif event.is_action_released("game_back"):
 		movement_vector.z = 0
 
-	if event.is_action_pressed("game_down"):
-		movement_vector.y = -1
-	elif event.is_action_released("game_down"):
-		movement_vector.y = 0
-
-	if event.is_action_pressed("game_up"):
-		movement_vector.y = +1
-	elif event.is_action_released("game_up"):
-		movement_vector.y = 0
+	if on_floor && event.is_action_pressed("game_up"):
+		movement_vector.y = SPEED_JUMP
+		on_floor = false
 
 	# On click prepare raycast query to be executed in the physics loop
 	# raycast is based on center of screen
@@ -66,17 +68,40 @@ func _input(event):
 		get_tree().quit()
 
 
+
 func _physics_process(delta):
 	# Kinematicbody.move_and_collide moves relative to the world, not the object itself.
 	# The movement vector is rotated before being applied, this makes movement follow the camera direction
-	# Ignores rotation for vertical movement
+	# Horizontal and vertical movement is hanled seperately because:
+	#	- We want to ignore rotation for direction of vertical movement
+	#	- Vertical movement causes collision while walking (camera angle looking into the floor), slowing the movement
+	_h_move(delta)
+	_v_move(delta)
 
-	var rotated_movement_vector
-	rotated_movement_vector = Vector3(movement_vector.x, 0, movement_vector.z)
-	rotated_movement_vector = rotated_movement_vector.rotated(Vector3(1,0,0),deg2rad(pitch))
-	rotated_movement_vector = rotated_movement_vector.rotated(Vector3(0,1,0),deg2rad(yaw))
-	rotated_movement_vector.y = movement_vector.y
-	player.move_and_collide(rotated_movement_vector)
+func _h_move(delta):
+
+	var movement
+	movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
+	movement = movement.rotated(Vector3(1,0,0),deg2rad(pitch))
+	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
+	movement.y = 0 # remove vertical component created by the rotation
+
+	if on_floor:
+		movement = movement * SPEED_WALK * delta
+	else:
+		movement = movement * SPEED_AIR * delta
+	player.move_and_collide(movement)
+
+func _v_move(delta):
+	# Apply gravity every tick
+	movement_vector.y = movement_vector.y + delta*GRAVITY
+
+	var movement
+	movement = Vector3(0, movement_vector.y, 0)
+	var collision = player.move_and_collide(movement)
+
+	if collision != null and collision.normal.y != 0:
+		on_floor = true
 
 #func _process(delta):
 #	pass
