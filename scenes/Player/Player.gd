@@ -4,10 +4,9 @@ onready var camera = get_node("Camera")
 onready var player = get_node(".")
 
 var movement_vector = Vector3(0,0,0)
-
-var view_sensitivity = 1
 var yaw   = 45
 var pitch = 45
+var view_sensitivity = 1
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
@@ -27,7 +26,6 @@ func _input(event):
 		yaw   = fmod(yaw - relative_x * view_sensitivity, 360)
 		pitch = max(min(pitch - relative_y * view_sensitivity, 90), -90)
 		player.set_rotation(Vector3(deg2rad(pitch), deg2rad(yaw),0 ))
-
 
 	if event.is_action_pressed("game_right"):
 		movement_vector.x = +1
@@ -64,8 +62,21 @@ func _input(event):
 	if event.is_action_pressed("game_click"):
 		camera.cast_ray()
 
+	if event.is_action_pressed("game_quit"):
+		get_tree().quit()
 
-func _process(delta):
 
-	player.translate(movement_vector)
-	pass
+func _physics_process(delta):
+	# Kinematicbody.move_and_collide moves relative to the world, not the object itself.
+	# The movement vector is rotated before being applied, this makes movement follow the camera direction
+	# Ignores rotation for vertical movement
+
+	var rotated_movement_vector
+	rotated_movement_vector = Vector3(movement_vector.x, 0, movement_vector.z)
+	rotated_movement_vector = rotated_movement_vector.rotated(Vector3(1,0,0),deg2rad(pitch))
+	rotated_movement_vector = rotated_movement_vector.rotated(Vector3(0,1,0),deg2rad(yaw))
+	rotated_movement_vector.y = movement_vector.y
+	player.move_and_collide(rotated_movement_vector)
+
+#func _process(delta):
+#	pass
