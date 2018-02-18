@@ -6,7 +6,7 @@ var chunksize = 10
 
 func _ready():
 	# Render grid
-	var size = 2.1
+	var size = 2
 
 	for i in range(-chunksize, chunksize):
 		for j in range(-chunksize, chunksize):
