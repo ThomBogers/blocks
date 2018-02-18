@@ -54,6 +54,7 @@ lod_max_hysteresis = 0.0
 mesh = SubResource( 2 )
 skeleton = NodePath("..")
 material/0 = null
+_sections_unfolded = [ "material" ]
 
 [node name="Crosshair" type="TextureRect" parent="." index="1"]
 

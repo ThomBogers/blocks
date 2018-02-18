@@ -6,6 +6,10 @@ const SPEED_JUMP = 2
 const SPEED_WALK = 15
 const SPEED_AIR  = 15
 
+const FLYING  = 0
+const WALKING = 1
+var MODE = FLYING
+
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
 
@@ -26,6 +30,13 @@ func _ready():
 	pass
 
 func _input(event):
+
+	if event.is_action_pressed("game_godmode"):
+		if MODE == FLYING:
+			MODE = WALKING
+		else:
+			movement_vector.y = 0
+			MODE = FLYING
 
 	if event is InputEventMouseMotion:
 		var relative_x = event.relative.x
@@ -55,9 +66,22 @@ func _input(event):
 	elif event.is_action_released("game_back"):
 		movement_vector.z = 0
 
-	if on_floor && event.is_action_pressed("game_up"):
-		movement_vector.y = SPEED_JUMP
-		on_floor = false
+	if MODE == WALKING:
+		if on_floor && event.is_action_pressed("game_up"):
+			movement_vector.y = SPEED_JUMP
+			on_floor = false
+	else:
+		if event.is_action_pressed("game_up"):
+			movement_vector.y = SPEED_JUMP
+		elif event.is_action_released("game_up"):
+			movement_vector.y = 0
+
+		if event.is_action_pressed("game_down"):
+			movement_vector.y = -SPEED_JUMP
+		elif event.is_action_released("game_down"):
+			movement_vector.y = 0
+
+
 
 	# On click prepare raycast query to be executed in the physics loop
 	# raycast is based on center of screen
@@ -89,8 +113,10 @@ func _h_move(delta):
 	player.move_and_collide(movement)
 
 func _v_move(delta):
-	# Apply gravity every tick
-	movement_vector.y = movement_vector.y + delta*GRAVITY
+
+	if MODE == WALKING:
+		# Apply gravity every tick
+		movement_vector.y = movement_vector.y + delta*GRAVITY
 
 	var movement = Vector3(0, movement_vector.y, 0)
 	var collision = player.move_and_collide(movement)

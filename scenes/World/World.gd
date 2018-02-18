@@ -1,29 +1,42 @@
 extends Spatial
 
-# Load dependencies
-var kubelet = preload("res://scenes/Kubelet/Kubelet.tscn")
+onready var meshInstance = get_node("StaticBody/CollisionShape/MeshInstance")
+onready var collInstance = get_node("StaticBody/CollisionShape")
+
+var material = preload("res://materials/world_spatialmaterial.tres")
+
 var chunksize = 10
 
 func _ready():
-	# Render grid
-	var size = 2
 
-	for i in range(-chunksize, chunksize):
-		for j in range(-chunksize, chunksize):
-			for k in range(-chunksize, 0):
-				var kube  = kubelet.instance()
+	meshInstance.set_material_override(material)
 
-				var xpos  = size * i
-				var ypos  = size * k
-				var zpos  = size * j
-				var move  = Vector3(xpos, ypos, zpos)
+	var surfTool = SurfaceTool.new()
+	var mesh     = Mesh.new()
 
-				kube.translate(move)
-				add_child(kube)
-	pass
+	surfTool.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var uv1 = Vector2(0,0)
+	var v1 = Vector3(0,0,0)
+
+	var uv2 = Vector2(0,1)
+	var v2 = Vector3(0,0,chunksize)
+
+	var uv3 = Vector2(1,1)
+	var v3 = Vector3(chunksize,0,chunksize)
+
+	var uv4 = Vector2(1,0)
+	var v4 = Vector3(chunksize,0,0)
+
+	var uvarray = [ uv4, uv3, uv2, uv1]
+	var varray = [ v4, v3, v2, v1 ]
+
+	surfTool.add_triangle_fan(varray,uvarray)
+	surfTool.generate_normals()
+	surfTool.index()
+	surfTool.commit(mesh)
+
+	meshInstance.set_mesh(mesh)
+	meshInstance.create_trimesh_collision()
 
 
-#func _process(delta):
-#	# Called every frame. Delta is time since last frame.
-#	# Update game logic here.
-#	pass
