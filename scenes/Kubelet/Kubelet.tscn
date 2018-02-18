@@ -14,7 +14,7 @@ subdivide_width = 0
 subdivide_height = 0
 subdivide_depth = 0
 
-[node name="Kubelet" type="StaticBody" index="0"]
+[node name="Kubelet" type="StaticBody"]
 
 input_ray_pickable = true
 input_capture_on_drag = false
