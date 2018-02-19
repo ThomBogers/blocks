@@ -1,6 +1,6 @@
 # Block game
 Attempt a game made with the godot engine. 
-It should initially be a minicraft clone, and maybe add cool stuff after?
+It should initially be a minecraft clone, and maybe add cool stuff after?
 
 ## Versions
 ### dc0a51451bb734620bf8648742c002acd7487879
