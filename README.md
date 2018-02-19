@@ -11,6 +11,8 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
 ![version 44d742f5ff472aaab26d5e42b406963afafd1467](docs/44d742f5ff472aaab26d5e42b406963afafd1467.png)
 ### ffb87836b53babee7f96a18df1757a66d39090cc
 ![version ffb87836b53babee7f96a18df1757a66d39090cc](docs/ffb87836b53babee7f96a18df1757a66d39090cc.png)
+### 8159427ae8ebdf4a5c8d04844a67258f39826bbd
+![version 8159427ae8ebdf4a5c8d04844a67258f39826bbd](docs/8159427ae8ebdf4a5c8d04844a67258f39826bbd.png)
 
 ## Todo
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
