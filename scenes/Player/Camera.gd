@@ -26,7 +26,8 @@ func _physics_process(delta):
 		var space_state = get_world().get_direct_space_state()
 		var result = space_state.intersect_ray(raycast_from, raycast_to, [self])
 		if not result.empty():
-			result.collider.hit()
+			print("Hit object", result)
+			#result.collider.hit()
 
 		raycast_from = null
 		raycast_to   = null
