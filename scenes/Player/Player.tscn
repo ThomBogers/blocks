@@ -8,12 +8,12 @@
 
 [sub_resource type="CapsuleShape" id=1]
 
-radius = 1.0
+radius = 0.7
 height = 1.0
 
 [sub_resource type="CapsuleMesh" id=2]
 
-radius = 1.0
+radius = 0.7
 mid_height = 1.0
 radial_segments = 64
 rings = 8

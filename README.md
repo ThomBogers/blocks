@@ -17,5 +17,5 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
  - Change kubelet shape to d20 die (icosahedron)
  - Add textures to kubelets
  - Add multipe chunk functionality
- - Improve world generation algorithm (Perlin Noise?)
+ - Improve world generation algorithm: https://thebookofshaders.com/13/
  - Implement block destruction for new mesh world (chunk mesh regeneration)
