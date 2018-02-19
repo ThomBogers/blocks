@@ -3,7 +3,7 @@
 [ext_resource path="res://scenes/Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/World/World.tscn" type="PackedScene" id=2]
 
-[node name="Main" type="Spatial" index="0"]
+[node name="Main" type="Spatial"]
 
 [node name="Viewport" type="Viewport" parent="." index="0"]
 
