@@ -21,3 +21,5 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
  - Add multipe chunk functionality
  - Improve world generation algorithm: https://thebookofshaders.com/13/
  - Implement block destruction for new mesh world (chunk mesh regeneration)
+ - Add tunneling possibility
+ - Store chunk data more efficiently than just an array
