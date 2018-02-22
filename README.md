@@ -17,9 +17,11 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
 ## Todo
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
  - Change kubelet shape to d20 die (icosahedron)
- - Add textures to kubelets
+ - Add textures to kubelets (Add color item to quad, and set color in shader?)
  - Add multipe chunk functionality
  - Improve world generation algorithm: https://thebookofshaders.com/13/
  - Implement block destruction for new mesh world (chunk mesh regeneration)
  - Add tunneling possibility
  - Store chunk data more efficiently than just an array
+ - Remove duplicate vertices when adding verticals/overlapping horizontals
+ - Move mesh generation to native code
