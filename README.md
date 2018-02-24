@@ -13,6 +13,8 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
 ![version ffb87836b53babee7f96a18df1757a66d39090cc](docs/ffb87836b53babee7f96a18df1757a66d39090cc.png)
 ### 8159427ae8ebdf4a5c8d04844a67258f39826bbd
 ![version 8159427ae8ebdf4a5c8d04844a67258f39826bbd](docs/8159427ae8ebdf4a5c8d04844a67258f39826bbd.png)
+### a277294224ea93dfa0f8a04df188a01e6badd468
+![version a277294224ea93dfa0f8a04df188a01e6badd468](docs/a277294224ea93dfa0f8a04df188a01e6badd468.png)
 
 ## Todo
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
@@ -21,7 +23,6 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
  - Add multipe chunk functionality
  - Improve world generation algorithm: https://thebookofshaders.com/13/
  - Implement block destruction for new mesh world (chunk mesh regeneration)
- - Add tunneling possibility
  - Store chunk data more efficiently than just an array
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Move mesh generation to native code
