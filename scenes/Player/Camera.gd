@@ -17,7 +17,7 @@ func set_viewport_size():
 	viewport_size = get_viewport().get_visible_rect().size
 
 func cast_ray():
-	var screen_center= Vector2(viewport_size.x/2, viewport_size.y/2)
+	var screen_center = Vector2(viewport_size.x/2, viewport_size.y/2)
 	raycast_from = camera.project_ray_origin(screen_center)
 	raycast_to   = raycast_from + camera.project_ray_normal(screen_center) * ray_length
 
@@ -26,8 +26,10 @@ func _physics_process(delta):
 		var space_state = get_world().get_direct_space_state()
 		var result = space_state.intersect_ray(raycast_from, raycast_to, [self])
 		if not result.empty():
-			print("Hit object", result)
+			print("HIT", result.collider)
 			#result.collider.hit()
+
+
 
 		raycast_from = null
 		raycast_to   = null

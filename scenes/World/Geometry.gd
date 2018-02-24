@@ -5,8 +5,11 @@ onready var collInstance = get_node("CollisionShape")
 
 var material = load("res://materials/world_spatialmaterial.tres")
 
+var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
+
 var cubesize  = 3
-var chunksize = 32
+var chunksize = 64
+var chunkoffset = Vector3(0,0,0)
 
 var chunk = []
 
@@ -38,8 +41,47 @@ enum BLOCK_TYPE {
 func hit():
 	print("Ooof")
 
+func _build_chunk_simplex():
+	var hmin = chunksize
+
+	var ox = chunkoffset.x
+	var oz = chunkoffset.z
+	var oy = chunkoffset.y
+	var empty = true
+	var ns1 = randf()/10
+	var ns2 = randf()/2
+
+	for x in range(chunksize):
+		chunk.append([])
+		for z in range(chunksize):
+			chunk[x].append([])
+
+			var n1 = simplex.simplex2(ns1*(ox+x), ns1*(oz+z))
+			var n2 = simplex.simplex2(ns2*(ox+x+100.0), ns2*(oz+z))
+			var h = 16.0*n1 + 4.0*n2 + 20 - oy
+
+			if h < hmin:
+				hmin = h
+
+			for y in range(chunksize):
+				if y <= h:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				else:
+					chunk[x][z].append(BLOCK_TYPE.AIR)
+
+	print("HMIN ", hmin)
+
+	for x in range(0, chunk.size()):
+		for z in range(15,20):
+			for y in range(10,15):
+				chunk[x][z][y] = BLOCK_TYPE.AIR
+
+
+
+
+
+
 func _build_chunk():
-	var y
 	for x in range(chunksize):
 		chunk.append([])
 		for z in range(chunksize):
@@ -74,7 +116,11 @@ func _build_chunk_test0():
 		for z in range(4,8):
 			chunk[x][z][y] = BLOCK_TYPE.AIR
 			chunk[x][z][y+1] = BLOCK_TYPE.AIR
-		
+	for z in range(chunksize):
+		for x in range(4,8):
+			chunk[x][z][y] = BLOCK_TYPE.AIR
+			chunk[x][z][y+1] = BLOCK_TYPE.AIR
+
 func _build_chunk_test1():
 	chunksize = 3
 
@@ -82,13 +128,13 @@ func _build_chunk_test1():
 		chunk.append([])
 		for z in range(chunksize):
 			chunk[x].append([])
-			
+
 			var h = 0
 			if z == 1 and x%3 == 1:
 				h = 2
 
 			for y in range(chunksize):
-				
+
 				var current
 				if y <= h:
 					current = BLOCK_TYPE.DIRT
@@ -97,7 +143,7 @@ func _build_chunk_test1():
 
 				chunk[x][z].append(current)
 
-		
+
 func _build_chunk_test2():
 	chunksize = 1
 
@@ -105,9 +151,9 @@ func _build_chunk_test2():
 		chunk.append([])
 		for z in range(chunksize):
 			chunk[x].append([])
-			
+
 			for y in range(chunksize):
-				
+
 				var current
 				if y == 0:
 					current = BLOCK_TYPE.DIRT
@@ -117,8 +163,13 @@ func _build_chunk_test2():
 				chunk[x][z].append(current)
 
 func _ready():
-	#_build_chunk()
-	_build_chunk_test0()
+
+	_build_chunk_simplex()
+	#_build_chunk_test0()
+
+	render_mesh()
+
+func render_mesh():
 
 	meshInstance.set_material_override(material)
 
@@ -133,7 +184,7 @@ func _ready():
 			zoffset = z*cubesize
 
 			for y in range(0,chunk[x][z].size()):
-				
+
 				yoffset = y*cubesize
 				var res
 				res = _get_vertical_z(x,z,y)
@@ -185,7 +236,7 @@ func _get_random_y(x,z):
 
 func _get_horizontal(x, z, y):
 	var current_type  = chunk[x][z][y]
-	
+
 	var next_type
 	if y >= (chunk[x][z].size() - 1):
 		next_type = BLOCK_TYPE.AIR
@@ -239,7 +290,7 @@ func _get_horizontal(x, z, y):
 
 func _get_vertical_x(x,z,y):
 	var current_type  = chunk[x][z][y]
-	
+
 	var next_type
 	if x >= (chunk.size() - 1):
 		next_type = BLOCK_TYPE.AIR
@@ -297,7 +348,7 @@ func _get_vertical_x(x,z,y):
 func _get_vertical_z(x,z,y):
 
 	var current_type  = chunk[x][z][y]
-	
+
 	var next_type
 	if z >= (chunk[x].size() -1):
 		next_type = BLOCK_TYPE.AIR

@@ -1,9 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=2]
-
-[ext_resource path="res://materials/world_shadermaterial.shader" type="Shader" id=1]
+[gd_resource type="ShaderMaterial" format=2]
 
 [resource]
 
 render_priority = 0
-shader = ExtResource( 1 )
 
