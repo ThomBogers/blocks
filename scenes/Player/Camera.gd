@@ -2,6 +2,8 @@ extends InterpolatedCamera
 
 onready var viewport_size
 onready var camera = get_node(".")
+onready var player = get_node("..")
+onready var shap   = get_node("../PlayerCollider")
 
 var raycast_from     = null
 var raycast_to       = null
@@ -11,6 +13,7 @@ const ray_length     = 1000
 func _ready():
 	get_tree().get_root().connect("size_changed", self, "set_viewport_size")
 	set_viewport_size()
+
 	pass
 
 func set_viewport_size():
@@ -24,10 +27,10 @@ func cast_ray():
 func _physics_process(delta):
 	if raycast_from != null && raycast_to != null:
 		var space_state = get_world().get_direct_space_state()
-		var result = space_state.intersect_ray(raycast_from, raycast_to, [self])
+		var result = space_state.intersect_ray(raycast_from, raycast_to, [self, camera, player, shap])
 		if not result.empty():
-			print("HIT", result.collider)
-			#result.collider.hit()
+			#Go from mesh in mesh instance to Geometry
+			result.collider.get_node("../../..").hit(result)
 
 
 

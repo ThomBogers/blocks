@@ -7,8 +7,8 @@ var material = load("res://materials/world_spatialmaterial.tres")
 
 var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
 
-var cubesize  = 3
-var chunksize = 64
+var cubesize  = 2
+var chunksize = 16
 var chunkoffset = Vector3(0,0,0)
 
 var chunk = []
@@ -38,10 +38,18 @@ enum BLOCK_TYPE {
 	DIRT
 }
 
-func hit():
-	print("Ooof")
+func hit(collision):
+	#print("Ooof", collision)
+	var x = floor(collision.position.x/cubesize)
+	var z = floor(collision.position.z/cubesize)
+	var y = floor(collision.position.y/cubesize)
 
-func _build_chunk_simplex():
+	print("Hit at x: ", x, " z: ", z, " y: ", y)
+	chunk[x][z][y] = BLOCK_TYPE.AIR
+	render_mesh()
+
+
+func _build_chunk_simplex_2d():
 	var hmin = chunksize
 
 	var ox = chunkoffset.x
@@ -69,16 +77,46 @@ func _build_chunk_simplex():
 				else:
 					chunk[x][z].append(BLOCK_TYPE.AIR)
 
-	print("HMIN ", hmin)
 
-	for x in range(0, chunk.size()):
-		for z in range(15,20):
-			for y in range(10,15):
-				chunk[x][z][y] = BLOCK_TYPE.AIR
-
+	#for x in range(0, chunk.size()):
+	#	for z in range(15,20):
+	#		for y in range(10,15):
+	#			chunk[x][z][y] = BLOCK_TYPE.AIR
 
 
 
+
+func _build_chunk_simplex_3d():
+	var hmin = chunksize
+
+	var ox = chunkoffset.x
+	var oz = chunkoffset.z
+	var oy = chunkoffset.y
+	var empty = true
+	var ns1 = randf()/10
+	var ns2 = randf()/2
+
+	var yfact = 5
+
+	for x in range(chunksize):
+		chunk.append([])
+		for z in range(chunksize):
+			chunk[x].append([])
+
+
+
+			for y in range(chunksize):
+				var n1 = simplex.simplex3(ns1*(ox+x), ns1*(oz+z), ns1*(oy+y)*yfact)
+				var n2 = simplex.simplex3(ns2*(ox+x+100.0), ns2*(oz+z), ns2*(oy+y)*yfact)
+				var h = 16.0*n1 + 4.0*n2 + 16 - oy
+
+				if h < hmin:
+					hmin = h
+
+				if y <= h:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				else:
+					chunk[x][z].append(BLOCK_TYPE.AIR)
 
 
 func _build_chunk():
@@ -164,7 +202,7 @@ func _build_chunk_test2():
 
 func _ready():
 
-	_build_chunk_simplex()
+	_build_chunk_simplex_2d()
 	#_build_chunk_test0()
 
 	render_mesh()
@@ -247,7 +285,7 @@ func _get_horizontal(x, z, y):
 	if current_type == next_type:
 		return null
 
-	if current_type != BLOCK_TYPE.AIR and next_type != BLOCK_TYPE.AIR:
+	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
 	uvarray = []
@@ -300,7 +338,7 @@ func _get_vertical_x(x,z,y):
 	if current_type == next_type:
 		return null
 
-	if current_type != BLOCK_TYPE.AIR and next_type != BLOCK_TYPE.AIR:
+	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
 
@@ -358,7 +396,7 @@ func _get_vertical_z(x,z,y):
 	if current_type == next_type:
 		return null
 
-	if current_type != BLOCK_TYPE.AIR and next_type != BLOCK_TYPE.AIR:
+	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
 

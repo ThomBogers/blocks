@@ -34,14 +34,14 @@ collision/safe_margin = 0.001
 script = ExtResource( 1 )
 _sections_unfolded = [ "Collision", "Transform" ]
 
-[node name="CollisionShape" type="CollisionShape" parent="." index="0"]
+[node name="PlayerCollider" type="CollisionShape" parent="." index="0"]
 
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
 shape = SubResource( 1 )
 disabled = false
 _sections_unfolded = [ "Transform", "Visibility" ]
 
-[node name="MeshInstance" type="MeshInstance" parent="CollisionShape" index="0"]
+[node name="MeshInstance" type="MeshInstance" parent="PlayerCollider" index="0"]
 
 layers = 1
 material_override = null
