@@ -209,6 +209,11 @@ func _ready():
 
 func render_mesh():
 
+	var coll = meshInstance.get_children()
+	if not coll.empty():
+		for item in coll:
+			item.queue_free()
+
 	meshInstance.set_material_override(material)
 
 	var surfTool = SurfaceTool.new()

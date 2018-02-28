@@ -19,7 +19,7 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Add textures to kubelets (Add color item to quad, and set color in shader?)
  - Add multipe chunk functionality
  - Improve world generation algorithm: https://thebookofshaders.com/13/
- - Implement block destruction for new mesh world (chunk mesh regeneration)
  - Store chunk data more efficiently than just an array
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Move mesh generation to native code
+ - Improve mesh collision accuracy, add left and right mouse action
