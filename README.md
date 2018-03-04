@@ -4,10 +4,12 @@ It should initially be a minecraft clone, and maybe add cool stuff after?
 
 ## Controls:
 ```
-WASD:  Move
-MOUSE: Look around 
-E:     Toggle flying
-Q/Esc: Quit the game
+WASD:        Move
+MOUSE:       Look around 
+E:           Toggle flying
+Q/Esc:       Quit the game
+LEFT MOUSE:  Remove block
+RIGHT MOUSE: Add block
 ```
 
 ## Versions
@@ -22,4 +24,3 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Store chunk data more efficiently than just an array
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Move mesh generation to native code
- - Improve mesh collision accuracy, add left and right mouse action
