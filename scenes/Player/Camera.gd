@@ -5,10 +5,11 @@ onready var camera = get_node(".")
 onready var player = get_node("..")
 onready var shap   = get_node("../PlayerCollider")
 
-var raycast_from     = null
-var raycast_to       = null
 const ray_length     = 1000
 
+var raycast_from     = null
+var raycast_to       = null
+var raycast_type     = null
 
 func _ready():
 	get_tree().get_root().connect("size_changed", self, "set_viewport_size")
@@ -19,10 +20,14 @@ func _ready():
 func set_viewport_size():
 	viewport_size = get_viewport().get_visible_rect().size
 
-func cast_ray():
+func cast_ray(type):
 	var screen_center = Vector2(viewport_size.x/2, viewport_size.y/2)
 	raycast_from = camera.project_ray_origin(screen_center)
 	raycast_to   = raycast_from + camera.project_ray_normal(screen_center) * ray_length
+	raycast_type = type
+
+func hit_ray(target):
+	target.collider.get_node("../../..").hit(target, raycast_type)
 
 func _physics_process(delta):
 	if raycast_from != null && raycast_to != null:
@@ -30,9 +35,7 @@ func _physics_process(delta):
 		var result = space_state.intersect_ray(raycast_from, raycast_to, [self, camera, player, shap])
 		if not result.empty():
 			#Go from mesh in mesh instance to Geometry
-			result.collider.get_node("../../..").hit(result)
-
-
+			hit_ray(result)
 
 		raycast_from = null
 		raycast_to   = null

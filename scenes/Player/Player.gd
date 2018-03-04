@@ -20,6 +20,9 @@ var yaw   = 45
 var pitch = 45
 const view_sensitivity = 1
 
+var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
+
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
@@ -85,8 +88,10 @@ func _input(event):
 
 	# On click prepare raycast query to be executed in the physics loop
 	# raycast is based on center of screen
-	if event.is_action_pressed("game_click"):
-		camera.cast_ray()
+	if event.is_action_pressed("game_click_left"):
+		camera.cast_ray(EQUIPMENT.TYPES.ARM)
+	if event.is_action_pressed("game_click_right"):
+		camera.cast_ray(EQUIPMENT.TYPES.DIRT)
 
 	if event.is_action_pressed("game_quit"):
 		get_tree().quit()

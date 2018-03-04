@@ -4,8 +4,9 @@ onready var meshInstance = get_node("CollisionShape/MeshInstance")
 onready var collInstance = get_node("CollisionShape")
 
 var material = load("res://materials/world_spatialmaterial.tres")
-
 var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
+
+var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 
 var cubesize  = 2
 var chunksize = 16
@@ -38,14 +39,66 @@ enum BLOCK_TYPE {
 	DIRT
 }
 
-func hit(collision):
-	#print("Ooof", collision)
-	var x = floor(collision.position.x/cubesize)
-	var z = floor(collision.position.z/cubesize)
-	var y = floor(collision.position.y/cubesize)
+func hit(collision, type):
 
-	print("Hit at x: ", x, " z: ", z, " y: ", y)
-	chunk[x][z][y] = BLOCK_TYPE.AIR
+	# Calculate direction of collision
+
+	print("COLL: ", collision)
+	print("ISARM: ", type == EQUIPMENT.TYPES.ARM)
+
+	var DIRFLIP = 0
+	if type != EQUIPMENT.TYPES.ARM:
+		DIRFLIP = 1
+
+	var x_pos = floor(collision.position.x/cubesize)
+	var z_pos = floor(collision.position.z/cubesize)
+	var y_pos = floor(collision.position.y/cubesize)
+
+	var x_tar = x_pos
+	var z_tar = z_pos
+	var y_tar = y_pos
+
+	if collision.normal.x == -1:
+		x_tar += (DIRFLIP * collision.normal.x)
+		y_tar += DIRFLIP
+	elif collision.normal.x == 1:
+		y_tar += DIRFLIP
+
+	elif collision.normal.z == -1:
+		z_tar += (DIRFLIP * collision.normal.z)
+		y_tar += DIRFLIP
+	elif collision.normal.z == 1:
+		y_tar += DIRFLIP
+
+	elif collision.normal.y == -1:
+		y_tar += (DIRFLIP * collision.normal.y)
+	elif collision.normal.y == 1:
+		y_tar += (DIRFLIP * collision.normal.y)
+
+
+	print("Norm: ", collision.normal)
+	print("Hit at x_pos: ", x_pos, " x_tar: ", x_tar)
+	print("Hit at z_pos: ", z_pos, " z_tar: ", z_tar)
+	print("Hit at y_pos: ", y_pos, " y_tar: ", y_tar)
+
+
+	if x_tar > chunk.size()-1:
+		print("Out of x_tar range")
+		return
+	if z_tar > chunk[x_tar].size()-1:
+		print("Out of z_tar range")
+		return
+	if y_tar > chunk[x_tar][z_tar].size()-1:
+		print("Out of y_tar range")
+		return
+
+	if type == EQUIPMENT.TYPES.ARM:
+		chunk[x_tar][z_tar][y_tar] = BLOCK_TYPE.AIR
+	elif type == EQUIPMENT.TYPES.DIRT:
+		chunk[x_tar][z_tar][y_tar] = BLOCK_TYPE.DIRT
+	else:
+		print("UNKOWN HIT TYPE: ", type)
+
 	render_mesh()
 
 
@@ -183,7 +236,7 @@ func _build_chunk_test1():
 
 
 func _build_chunk_test2():
-	chunksize = 1
+	chunksize = 10
 
 	for x in range(chunksize):
 		chunk.append([])
@@ -202,13 +255,14 @@ func _build_chunk_test2():
 
 func _ready():
 
-	_build_chunk_simplex_2d()
-	#_build_chunk_test0()
+	#_build_chunk_simplex_2d()
+	_build_chunk_test2()
 
 	render_mesh()
 
 func render_mesh():
 
+	# Remove old collision mesh if present
 	var coll = meshInstance.get_children()
 	if not coll.empty():
 		for item in coll:
