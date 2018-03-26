@@ -19,8 +19,11 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
  - Change kubelet shape to d20 die (icosahedron)
  - Add textures to kubelets (Add color item to quad, and set color in shader?)
- - Add multipe chunk functionality
- - Improve world generation algorithm: https://thebookofshaders.com/13/
- - Store chunk data more efficiently than just an array
  - Remove duplicate vertices when adding verticals/overlapping horizontals
- - Move mesh generation to native code
+ - Add projectiles
+ - Add multipe chunk functionality
+ 	- Render complete 'outer walls' for chunks
+ 	- Add loader for first chunk render
+ 	- Move mesh generation to native code
+ 	- Store chunk data more efficiently than just an array
+ 	- Improve world generation algorithm: https://thebookofshaders.com/13/
