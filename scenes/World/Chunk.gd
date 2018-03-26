@@ -1,7 +1,9 @@
 extends StaticBody
 
-onready var meshInstance = get_node("CollisionShape/MeshInstance")
-onready var collInstance = get_node("CollisionShape")
+var this = null
+
+var meshInstance = null
+var collInstance = null
 
 var material = load("res://materials/world_spatialmaterial.tres")
 var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
@@ -39,9 +41,13 @@ enum BLOCK_TYPE {
 	DIRT
 }
 
+
 func hit(collision, type):
 
 	# Calculate direction of collision
+
+	# Create position relative to chunk position
+	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
 
 	print("COLL: ", collision)
 	print("ISARM: ", type == EQUIPMENT.TYPES.ARM)
@@ -50,9 +56,9 @@ func hit(collision, type):
 	if type != EQUIPMENT.TYPES.ARM:
 		DIRFLIP = 1
 
-	var x_pos = floor(collision.position.x/cubesize)
-	var z_pos = floor(collision.position.z/cubesize)
-	var y_pos = floor(collision.position.y/cubesize)
+	var x_pos = floor(relPosition.x/cubesize)
+	var z_pos = floor(relPosition.z/cubesize)
+	var y_pos = floor(relPosition.y/cubesize)
 
 	var x_tar = x_pos
 	var z_tar = z_pos
@@ -105,9 +111,9 @@ func hit(collision, type):
 func _build_chunk_simplex_2d():
 	var hmin = chunksize
 
-	var ox = chunkoffset.x
-	var oz = chunkoffset.z
-	var oy = chunkoffset.y
+	var ox = (chunkoffset.x/chunksize)/cubesize
+	var oz = (chunkoffset.z/chunksize)/cubesize
+	var oy = (chunkoffset.y/chunksize)/cubesize
 	var empty = true
 	var ns1 = randf()/10
 	var ns2 = randf()/2
@@ -236,7 +242,6 @@ func _build_chunk_test1():
 
 
 func _build_chunk_test2():
-	chunksize = 10
 
 	for x in range(chunksize):
 		chunk.append([])
@@ -253,12 +258,20 @@ func _build_chunk_test2():
 
 				chunk[x][z].append(current)
 
-func _ready():
+func init(offset):
+	chunkoffset = Vector3(offset.x*chunksize*cubesize, 0, offset.z*chunksize*cubesize)
+	this = get_node(".")
+	this.translate(chunkoffset)
 
-	#_build_chunk_simplex_2d()
-	_build_chunk_test2()
+	meshInstance = get_node("CollisionShape/MeshInstance")
+	collInstance = get_node("CollisionShape")
 
+	_build_chunk_simplex_2d()
+	#_build_chunk_test2()
 	render_mesh()
+
+func _ready():
+	pass
 
 func render_mesh():
 
