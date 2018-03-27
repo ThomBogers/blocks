@@ -38,18 +38,22 @@ var c2
 var c3
 var c4
 
+# Seeds for terain gen
+var chunkSeeds = Vector2(0,0)
+
 enum BLOCK_TYPE {
 	AIR
 	DIRT
 }
 
-func init(offset):
+func init(offset, seeds):
 	chunkoffset = Vector3(offset.x*chunksize*cubesize, 0, offset.z*chunksize*cubesize)
 	this = get_node(".")
 	this.translate(chunkoffset)
 
 	meshInstance = get_node("CollisionShape/MeshInstance")
 	collInstance = get_node("CollisionShape")
+	chunkSeeds = seeds
 
 	#_build_chunk_simplex_3d()
 	_build_chunk_simplex_2d()
@@ -126,21 +130,20 @@ func hit(collision, type):
 func _build_chunk_simplex_2d():
 	var hmin = chunksize
 
-	var ox = (chunkoffset.x/chunksize)/cubesize
-	var oz = (chunkoffset.z/chunksize)/cubesize
-	var oy = (chunkoffset.y/chunksize)/cubesize
+	var ox = (chunkoffset.x/cubesize)
+	var oz = (chunkoffset.z/cubesize)
+	var oy = (chunkoffset.y/cubesize)
 	var empty = true
-	var ns1 = randf()/10
-	var ns2 = randf()/2
+	var yoffset = 17
 
 	for x in range(chunksize):
 		chunk.append([])
 		for z in range(chunksize):
 			chunk[x].append([])
 
-			var n1 = simplex.simplex2(ns1*(ox+x), ns1*(oz+z))
-			var n2 = simplex.simplex2(ns2*(ox+x+100.0), ns2*(oz+z))
-			var h = 16.0*n1 + 4.0*n2 + 20 - oy
+			var n1 = simplex.simplex2(chunkSeeds.x*(ox+x), chunkSeeds.x*(oz+z))
+			var n2 = simplex.simplex2(chunkSeeds.y*(ox+x+100.0), chunkSeeds.y*(oz+z))
+			var h = 16.0*n1 + 4.0*n2 + yoffset - oy
 
 			if h < hmin:
 				hmin = h
