@@ -41,6 +41,19 @@ enum BLOCK_TYPE {
 	DIRT
 }
 
+func init(offset):
+	chunkoffset = Vector3(offset.x*chunksize*cubesize, 0, offset.z*chunksize*cubesize)
+	this = get_node(".")
+	this.translate(chunkoffset)
+
+	meshInstance = get_node("CollisionShape/MeshInstance")
+	collInstance = get_node("CollisionShape")
+
+	#_build_chunk_simplex_3d()
+	_build_chunk_simplex_2d()
+	#_build_chunk_test2()
+	_render_mesh()
+
 
 func hit(collision, type):
 
@@ -105,7 +118,7 @@ func hit(collision, type):
 	else:
 		print("UNKOWN HIT TYPE: ", type)
 
-	render_mesh()
+	_render_mesh()
 
 
 func _build_chunk_simplex_2d():
@@ -137,20 +150,12 @@ func _build_chunk_simplex_2d():
 					chunk[x][z].append(BLOCK_TYPE.AIR)
 
 
-	#for x in range(0, chunk.size()):
-	#	for z in range(15,20):
-	#		for y in range(10,15):
-	#			chunk[x][z][y] = BLOCK_TYPE.AIR
-
-
-
-
 func _build_chunk_simplex_3d():
 	var hmin = chunksize
 
-	var ox = chunkoffset.x
-	var oz = chunkoffset.z
-	var oy = chunkoffset.y
+	var ox = (chunkoffset.x/chunksize)/cubesize
+	var oz = (chunkoffset.z/chunksize)/cubesize
+	var oy = (chunkoffset.y/chunksize)/cubesize
 	var empty = true
 	var ns1 = randf()/10
 	var ns2 = randf()/2
@@ -161,8 +166,6 @@ func _build_chunk_simplex_3d():
 		chunk.append([])
 		for z in range(chunksize):
 			chunk[x].append([])
-
-
 
 			for y in range(chunksize):
 				var n1 = simplex.simplex3(ns1*(ox+x), ns1*(oz+z), ns1*(oy+y)*yfact)
@@ -177,103 +180,7 @@ func _build_chunk_simplex_3d():
 				else:
 					chunk[x][z].append(BLOCK_TYPE.AIR)
 
-
-func _build_chunk():
-	for x in range(chunksize):
-		chunk.append([])
-		for z in range(chunksize):
-			chunk[x].append([])
-			var y_top = randi()%5
-			for y in range(chunksize):
-				if y <= y_top:
-					chunk[x][z].append(BLOCK_TYPE.DIRT)
-				else:
-					chunk[x][z].append(BLOCK_TYPE.AIR)
-
-func _build_chunk_test0():
-	chunksize = 10
-
-	for x in range(chunksize):
-		chunk.append([])
-		for z in range(chunksize):
-			chunk[x].append([])
-			var h = x*z
-
-			for y in range(chunksize*2):
-				var current
-				if y <= h:
-					current = BLOCK_TYPE.DIRT
-				else:
-					current = BLOCK_TYPE.AIR
-
-				chunk[x][z].append(current)
-
-	var y = 2
-	for x in range(chunksize):
-		for z in range(4,8):
-			chunk[x][z][y] = BLOCK_TYPE.AIR
-			chunk[x][z][y+1] = BLOCK_TYPE.AIR
-	for z in range(chunksize):
-		for x in range(4,8):
-			chunk[x][z][y] = BLOCK_TYPE.AIR
-			chunk[x][z][y+1] = BLOCK_TYPE.AIR
-
-func _build_chunk_test1():
-	chunksize = 3
-
-	for x in range(chunksize*3):
-		chunk.append([])
-		for z in range(chunksize):
-			chunk[x].append([])
-
-			var h = 0
-			if z == 1 and x%3 == 1:
-				h = 2
-
-			for y in range(chunksize):
-
-				var current
-				if y <= h:
-					current = BLOCK_TYPE.DIRT
-				else:
-					current = BLOCK_TYPE.AIR
-
-				chunk[x][z].append(current)
-
-
-func _build_chunk_test2():
-
-	for x in range(chunksize):
-		chunk.append([])
-		for z in range(chunksize):
-			chunk[x].append([])
-
-			for y in range(chunksize):
-
-				var current
-				if y == 0:
-					current = BLOCK_TYPE.DIRT
-				else:
-					current = BLOCK_TYPE.AIR
-
-				chunk[x][z].append(current)
-
-func init(offset):
-	chunkoffset = Vector3(offset.x*chunksize*cubesize, 0, offset.z*chunksize*cubesize)
-	this = get_node(".")
-	this.translate(chunkoffset)
-
-	meshInstance = get_node("CollisionShape/MeshInstance")
-	collInstance = get_node("CollisionShape")
-
-	_build_chunk_simplex_2d()
-	#_build_chunk_test2()
-	render_mesh()
-
-func _ready():
-	pass
-
-func render_mesh():
+func _render_mesh():
 
 	# Remove old collision mesh if present
 	var coll = meshInstance.get_children()
@@ -317,32 +224,6 @@ func render_mesh():
 	meshInstance.set_mesh(mesh)
 	meshInstance.create_trimesh_collision()
 
-func _get_random_y(x,z):
-	randomize()
-	var prev
-
-	if x == 0 and z == 0:
-		return randi()%4
-	elif x == 0:
-		prev = chunk[0][z-1]
-	elif z == 0:
-		prev = chunk[x-1][z]
-	else:
-		prev = (chunk[x][z-1] + chunk[x-1][z] + chunk[x-1][z-1]) / 3
-
-
-	var up   = randi()%4
-
-	if x+z%128 == 0:
-		up   = randi()%10
-
-	var down = randi()%4
-	if x+z%256 == 0:
-		down   = randi()%10
-
-	var res = prev + up - down
-
-	return res
 
 func _get_horizontal(x, z, y):
 	var current_type  = chunk[x][z][y]
@@ -513,3 +394,5 @@ func _get_vertical_z(x,z,y):
 	carray.append(c1)
 
 	return [varray, uvarray, carray]
+
+func _get_vertical():
