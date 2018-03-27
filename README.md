@@ -28,5 +28,4 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  	- Move mesh generation to native code
  	- Store chunk data more efficiently than just an array
  	- Improve world generation algorithm: https://thebookofshaders.com/13/
-  - remove blocks.csproj
   - add godot go native binding
