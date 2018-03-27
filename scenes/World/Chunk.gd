@@ -24,16 +24,18 @@ var zoffset
 var yoffset
 
 var uv1
-var v1
-var c1
 var uv2
-var v2
-var c2
 var uv3
-var v3
-var c3
 var uv4
+
+var v1
+var v2
+var v3
 var v4
+
+var c1
+var c2
+var c3
 var c4
 
 enum BLOCK_TYPE {
@@ -241,43 +243,12 @@ func _get_horizontal(x, z, y):
 	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
-	uvarray = []
-	varray  = []
-	carray  = []
+	v1 = Vector3(xoffset+0,       yoffset, zoffset+0)
+	v2 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
+	v3 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
+	v4 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
 
-	uv1 = Vector2(0,0)
-	v1 = Vector3(xoffset+0,yoffset,zoffset+0)
-	c1 = Color(0,0,0.5)
-
-	uv2 = Vector2(0,1)
-	v2 = Vector3(xoffset+0,yoffset,zoffset+cubesize)
-	c2 = Color(0,0,0.5)
-
-	uv3 = Vector2(1,1)
-	v3 = Vector3(xoffset+cubesize,yoffset,zoffset+cubesize)
-	c3 = Color(0,0,0.5)
-
-	uv4 = Vector2(1,0)
-	v4 = Vector3(xoffset+cubesize,yoffset,zoffset+0)
-	c4 = Color(0,0,0.5)
-
-	uvarray.append(uv4)
-	uvarray.append(uv3)
-	uvarray.append(uv2)
-	uvarray.append(uv1)
-
-	varray.append(v4)
-	varray.append(v3)
-	varray.append(v2)
-	varray.append(v1)
-
-	carray.append(c4)
-	carray.append(c3)
-	carray.append(c2)
-	carray.append(c1)
-
-
-	return [varray, uvarray, carray]
+	return _get_rect(v1,v2,v3,v4)
 
 func _get_vertical_x(x,z,y):
 	var current_type  = chunk[x][z][y]
@@ -294,47 +265,16 @@ func _get_vertical_x(x,z,y):
 	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
-
-	uvarray = []
-	varray  = []
-	carray  = []
-
 	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	uv1 = Vector2(0,0)
 	v1 = Vector3(xoffset+cubesize,yoff_top,zoffset)
-	c1 = Color(0,0,0.5)
-
-	uv2 = Vector2(0,1)
 	v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-	c2 = Color(0,0,0.5)
-
-	uv3 = Vector2(1,1)
 	v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-	c3 = Color(0,0,0.5)
-
-	uv4 = Vector2(1,0)
 	v4 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
-	c4 = Color(0,0,0.5)
 
-	uvarray.append(uv4)
-	uvarray.append(uv3)
-	uvarray.append(uv2)
-	uvarray.append(uv1)
-
-	varray.append(v4)
-	varray.append(v3)
-	varray.append(v2)
-	varray.append(v1)
-
-	carray.append(c4)
-	carray.append(c3)
-	carray.append(c2)
-	carray.append(c1)
-
-	return [varray, uvarray, carray]
+	return _get_rect(v1,v2,v3,v4)
 
 func _get_vertical_z(x,z,y):
 
@@ -352,30 +292,30 @@ func _get_vertical_z(x,z,y):
 	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
 		return null
 
-
-	uvarray = []
-	varray  = []
-	carray  = []
-
 	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
+	v1 = Vector3(xoffset,yoff_top,zoffset+cubesize)
+	v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
+	v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
+	v4 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+
+	return _get_rect(v1,v2,v3,v4)
+
+func _get_rect(v1,v2,v3,v4):
+	uvarray = []
+	varray  = []
+	carray  = []
 
 	uv1 = Vector2(0,0)
-	v1 = Vector3(xoffset,yoff_top,zoffset+cubesize)
-	c1 = Color(0,0,0.5)
-
 	uv2 = Vector2(0,1)
-	v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-	c2 = Color(0,0,0.5)
-
 	uv3 = Vector2(1,1)
-	v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-	c3 = Color(0,0,0.5)
-
 	uv4 = Vector2(1,0)
-	v4 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+
+	c1 = Color(0,0,0.5)
+	c2 = Color(0,0,0.5)
+	c3 = Color(0,0,0.5)
 	c4 = Color(0,0,0.5)
 
 	uvarray.append(uv4)
@@ -394,5 +334,3 @@ func _get_vertical_z(x,z,y):
 	carray.append(c1)
 
 	return [varray, uvarray, carray]
-
-func _get_vertical():
