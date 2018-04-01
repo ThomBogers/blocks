@@ -28,3 +28,4 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  	- Store chunk data more efficiently than just an array
  	- Improve world generation algorithm: https://thebookofshaders.com/13/
   - add godot go native binding
+  - prevent block placement at occupied position 

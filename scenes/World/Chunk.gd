@@ -5,13 +5,15 @@ var this = null
 var meshInstance = null
 var collInstance = null
 
-var material = load("res://materials/world_spatialmaterial.tres")
+export(Material) var material
+
+#var material = load("res://materials/world_spatialmaterial.tres")
 var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
 
 var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 
 var cubesize  = 2
-var chunksize = 16
+var chunksize = Vector3(16, 64, 16)
 var chunkoffset = Vector3(0,0,0)
 
 var chunk = []
@@ -47,7 +49,7 @@ enum BLOCK_TYPE {
 }
 
 func init(offset, seeds):
-	chunkoffset = Vector3(offset.x*chunksize*cubesize, 0, offset.z*chunksize*cubesize)
+	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, 0, offset.z*chunksize.x*cubesize)
 	this = get_node(".")
 	this.translate(chunkoffset)
 
@@ -128,7 +130,7 @@ func hit(collision, type):
 
 
 func _build_chunk_simplex_2d():
-	var hmin = chunksize
+	var ymin = chunksize.y
 
 	var ox = (chunkoffset.x/cubesize)
 	var oz = (chunkoffset.z/cubesize)
@@ -136,19 +138,19 @@ func _build_chunk_simplex_2d():
 	var empty = true
 	var yoffset = 17
 
-	for x in range(chunksize):
+	for x in range(chunksize.x):
 		chunk.append([])
-		for z in range(chunksize):
+		for z in range(chunksize.z):
 			chunk[x].append([])
 
 			var n1 = simplex.simplex2(chunkSeeds.x*(ox+x), chunkSeeds.x*(oz+z))
 			var n2 = simplex.simplex2(chunkSeeds.y*(ox+x+100.0), chunkSeeds.y*(oz+z))
 			var h = 16.0*n1 + 4.0*n2 + yoffset - oy
 
-			if h < hmin:
-				hmin = h
+			if h < ymin:
+				ymin = h
 
-			for y in range(chunksize):
+			for y in range(chunksize.y):
 				if y <= h:
 					chunk[x][z].append(BLOCK_TYPE.DIRT)
 				else:
@@ -156,29 +158,29 @@ func _build_chunk_simplex_2d():
 
 
 func _build_chunk_simplex_3d():
-	var hmin = chunksize
+	var ymin = chunksize.y
 
-	var ox = (chunkoffset.x/chunksize)/cubesize
-	var oz = (chunkoffset.z/chunksize)/cubesize
-	var oy = (chunkoffset.y/chunksize)/cubesize
+	var ox = (chunkoffset.x/chunksize.x)/cubesize
+	var oz = (chunkoffset.z/chunksize.z)/cubesize
+	var oy = (chunkoffset.y/chunksize.y)/cubesize
 	var empty = true
 	var ns1 = randf()/10
 	var ns2 = randf()/2
 
 	var yfact = 5
 
-	for x in range(chunksize):
+	for x in range(chunksize.x):
 		chunk.append([])
-		for z in range(chunksize):
+		for z in range(chunksize.z):
 			chunk[x].append([])
 
-			for y in range(chunksize):
+			for y in range(chunksize.y):
 				var n1 = simplex.simplex3(ns1*(ox+x), ns1*(oz+z), ns1*(oy+y)*yfact)
 				var n2 = simplex.simplex3(ns2*(ox+x+100.0), ns2*(oz+z), ns2*(oy+y)*yfact)
 				var h = 16.0*n1 + 4.0*n2 + 16 - oy
 
-				if h < hmin:
-					hmin = h
+				if h < ymin:
+					ymin = h
 
 				if y <= h:
 					chunk[x][z].append(BLOCK_TYPE.DIRT)
@@ -199,32 +201,32 @@ func _render_mesh():
 	var mesh     = Mesh.new()
 
 	surfTool.begin(Mesh.PRIMITIVE_TRIANGLES)
-	
-	var x = 0 
+
+	var x = 0
 	var z = 0
 	var y = 0
 	var res
 	var next_type
 	var current_type
-	
+
 	for x in range(0,chunk.size()):
 		for z in range(0,chunk[x].size()):
 			for y in range(0,chunk[x][z].size()):
 				current_type = chunk[x][z][y]
-				
+
 				#Cube left if on chunk edge
-				if z == 0:	
+				if z == 0:
 					res = _get_vertical_z(x,z-1,y, current_type, BLOCK_TYPE.AIR)
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
-				
+
 				#Cube front if on chunk edge
 				if x == 0:
-					
+
 					res = _get_vertical_x(x-1,z,y, current_type, BLOCK_TYPE.AIR)
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
-				
+
 				#Cube right
 				if z >= (chunk[x].size() -1):
 					next_type = BLOCK_TYPE.AIR
@@ -242,7 +244,7 @@ func _render_mesh():
 				res = _get_vertical_x(x,z,y, current_type, next_type)
 				if res != null:
 					surfTool.add_triangle_fan(res[0],res[1], res[2])
-								
+
 				# Cube top
 				if y >= (chunk[x][z].size() - 1):
 					next_type = BLOCK_TYPE.AIR
@@ -264,15 +266,15 @@ func _render_mesh():
 func _block_type_is_transparent(type):
 	if type == BLOCK_TYPE.AIR:
 		return true
-		
+
 	return false
-	
+
 
 func _get_horizontal(x, z, y, current_type, next_type):
 	xoffset = x*cubesize
 	zoffset = z*cubesize
 	yoffset = y*cubesize
-	
+
 	if current_type == next_type:
 		return null
 
@@ -290,7 +292,7 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 	xoffset = x*cubesize
 	zoffset = z*cubesize
 	yoffset = y*cubesize
-	
+
 	if current_type == next_type:
 		return null
 
@@ -312,7 +314,7 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 	xoffset = x*cubesize
 	zoffset = z*cubesize
 	yoffset = y*cubesize
-	
+
 	if current_type == next_type:
 		return null
 
