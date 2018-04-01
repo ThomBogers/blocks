@@ -103,7 +103,7 @@ adjustment_contrast = 1.0
 adjustment_saturation = 1.0
 _sections_unfolded = [ "Adjustments", "Ambient Light", "Background", "DOF Far Blur", "Fog", "Resource", "SSAO", "Tonemap" ]
 
-[node name="Main" type="Spatial" index="0"]
+[node name="Main" type="Spatial"]
 
 [node name="Viewport" type="Viewport" parent="." index="0"]
 

@@ -4,7 +4,7 @@
 [ext_resource path="res://images/raw/edge.png" type="Texture" id=2]
 [ext_resource path="res://materials/world_spatialmaterial.tres" type="Material" id=3]
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="SpatialMaterial" id=1]
 
 render_priority = 0
 flags_transparent = false
@@ -20,7 +20,7 @@ vertex_color_is_srgb = false
 params_diffuse_mode = 0
 params_specular_mode = 0
 params_blend_mode = 0
-params_cull_mode = 2
+params_cull_mode = 0
 params_depth_draw_mode = 0
 params_line_width = 1.0
 params_point_size = 1.0
@@ -77,7 +77,7 @@ constant_linear_velocity = Vector3( 0, 0, 0 )
 constant_angular_velocity = Vector3( 0, 0, 0 )
 script = ExtResource( 1 )
 _sections_unfolded = [ "Collision" ]
-material = SubResource( 3 )
+material = SubResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="." index="0"]
 

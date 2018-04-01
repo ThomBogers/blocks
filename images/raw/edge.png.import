@@ -2,31 +2,32 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.stex"
+path.s3tc="res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.s3tc.stex"
+path.etc2="res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.etc2.stex"
 
 [deps]
 
 source_file="res://images/raw/edge.png"
 source_md5="dcc1af51b22b9470d2a37390011a2763"
 
-dest_files=[ "res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.stex" ]
-dest_md5="dbf45fa5c223f1cb85c396ba7624bdf9"
+dest_files=[ "res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.s3tc.stex", "res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.etc2.stex" ]
+dest_md5="8f696a37b81fc6dcf3a13a28cb8eb825"
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/lossy_quality=0.7
 compress/hdr_mode=0
 compress/normal_map=0
-flags/repeat=0
+flags/repeat=true
 flags/filter=true
-flags/mipmaps=false
+flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=2
+flags/srgb=1
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 stream=false
 size_limit=0
-detect_3d=true
+detect_3d=false
 svg/scale=1.0

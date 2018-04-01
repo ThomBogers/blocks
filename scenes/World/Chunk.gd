@@ -40,6 +40,9 @@ var c2
 var c3
 var c4
 
+var should_ret  = false
+var should_flip = false
+
 # Seeds for terain gen
 var chunkSeeds = Vector2(0,0)
 
@@ -216,14 +219,14 @@ func _render_mesh():
 
 				#Cube left if on chunk edge
 				if z == 0:
-					res = _get_vertical_z(x,z-1,y, current_type, BLOCK_TYPE.AIR)
+					res = _get_vertical_z(x,z-1,y, BLOCK_TYPE.AIR, current_type)
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
 
 				#Cube front if on chunk edge
 				if x == 0:
 
-					res = _get_vertical_x(x-1,z,y, current_type, BLOCK_TYPE.AIR)
+					res = _get_vertical_x(x-1,z,y, BLOCK_TYPE.AIR, current_type)
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
 
@@ -269,22 +272,42 @@ func _block_type_is_transparent(type):
 
 	return false
 
+func _flip_or_return(current_type, next_type):
+	should_ret  = false
+	should_flip = false
+
+	if current_type == next_type:
+		should_ret = true
+
+	elif _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
+		should_ret = true
+
+	elif _block_type_is_transparent(current_type) and not _block_type_is_transparent(next_type):
+		should_flip = true
+
+	return [should_ret, should_flip]
+
+
 
 func _get_horizontal(x, z, y, current_type, next_type):
 	xoffset = x*cubesize
 	zoffset = z*cubesize
 	yoffset = y*cubesize
 
-	if current_type == next_type:
+	[should_ret, should_flip] = _flip_or_return(current_type, next_type)
+	if should_ret:
 		return null
 
-	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
-		return null
-
-	v1 = Vector3(xoffset+0,       yoffset, zoffset+0)
-	v2 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
-	v3 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
-	v4 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
+	if should_flip:
+		v4 = Vector3(xoffset+0,       yoffset, zoffset+0)
+		v3 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
+		v2 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
+		v1 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
+	else:
+		v1 = Vector3(xoffset+0,       yoffset, zoffset+0)
+		v2 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
+		v3 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
+		v4 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
 
 	return _get_rect(v1,v2,v3,v4)
 
@@ -293,20 +316,24 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 	zoffset = z*cubesize
 	yoffset = y*cubesize
 
-	if current_type == next_type:
-		return null
-
-	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
+	[should_ret, should_flip] = _flip_or_return(current_type, next_type)
+	if should_ret:
 		return null
 
 	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	v1 = Vector3(xoffset+cubesize,yoff_top,zoffset)
-	v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-	v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-	v4 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
+	if should_flip:
+		v4 = Vector3(xoffset+cubesize,yoff_top,zoffset)
+		v3 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
+		v2 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
+		v1 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
+	else:
+		v1 = Vector3(xoffset+cubesize,yoff_top,zoffset)
+		v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
+		v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
+		v4 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
 
 	return _get_rect(v1,v2,v3,v4)
 
@@ -315,20 +342,25 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 	zoffset = z*cubesize
 	yoffset = y*cubesize
 
-	if current_type == next_type:
-		return null
-
-	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
+	[should_ret, should_flip] = _flip_or_return(current_type, next_type)
+	if should_ret:
 		return null
 
 	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	v1 = Vector3(xoffset,yoff_top,zoffset+cubesize)
-	v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-	v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-	v4 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+	if should_flip:
+		v1 = Vector3(xoffset,yoff_top,zoffset+cubesize)
+		v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
+		v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
+		v4 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+	else:
+		v4 = Vector3(xoffset,yoff_top,zoffset+cubesize)
+		v3 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
+		v2 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
+		v1 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+
 
 	return _get_rect(v1,v2,v3,v4)
 
