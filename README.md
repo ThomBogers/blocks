@@ -23,7 +23,6 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Add projectiles
  - Improve hit location detection
  - Add multipe chunk functionality
- 	- Render complete 'outer walls' for chunks
  	- Add loader for first chunk render
  	- Move mesh generation to native code
  	- Store chunk data more efficiently than just an array
