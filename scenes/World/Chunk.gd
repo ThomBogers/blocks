@@ -43,6 +43,8 @@ var c4
 var should_ret  = false
 var should_flip = false
 
+var thread = Thread.new()
+
 # Seeds for terain gen
 var chunkSeeds = Vector2(0,0)
 
@@ -173,6 +175,13 @@ func _build_chunk_simplex_3d():
 					chunk[x][z].append(BLOCK_TYPE.AIR)
 
 func _render_mesh():
+	thread.start(self, "_render_mesh_thread", null, 0)
+
+func _process(delta):
+	if not thread.is_active():
+		thread.wait_to_finish()
+
+func _render_mesh_thread(userdata):
 
 	# Remove old collision mesh if present
 	var coll = meshInstance.get_children()
