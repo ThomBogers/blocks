@@ -12,8 +12,8 @@ var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
 
 var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 
-var cubesize  = 2
-var chunksize = Vector3(16, 64, 16)
+const cubesize  = 2
+const chunksize = Vector3(16, 64, 16)
 var chunkoffset = Vector3(0,0,0)
 
 var chunk = []
@@ -61,8 +61,8 @@ func init(offset, seeds):
 	collInstance = get_node("CollisionShape")
 	chunkSeeds = seeds
 
-	_build_chunk_simplex_3d()
-	#_build_chunk_simplex_2d()
+	#_build_chunk_simplex_3d()
+	_build_chunk_simplex_2d()
 	_render_mesh()
 
 func hit(collision, type):

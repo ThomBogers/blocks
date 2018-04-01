@@ -8,7 +8,7 @@ const SPEED_AIR  = 15
 
 const FLYING  = 0
 const WALKING = 1
-var MODE = FLYING
+var MODE = WALKING
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
