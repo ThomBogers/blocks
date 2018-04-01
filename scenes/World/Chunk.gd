@@ -199,25 +199,56 @@ func _render_mesh():
 	var mesh     = Mesh.new()
 
 	surfTool.begin(Mesh.PRIMITIVE_TRIANGLES)
-
+	
+	var x = 0 
+	var z = 0
+	var y = 0
+	var res
+	var next_type
+	var current_type
+	
 	for x in range(0,chunk.size()):
-		xoffset = x*cubesize
 		for z in range(0,chunk[x].size()):
-			zoffset = z*cubesize
-
 			for y in range(0,chunk[x][z].size()):
-
-				yoffset = y*cubesize
-				var res
-				res = _get_vertical_z(x,z,y)
+				current_type = chunk[x][z][y]
+				
+				#Cube left if on chunk edge
+				if z == 0:	
+					res = _get_vertical_z(x,z-1,y, current_type, BLOCK_TYPE.AIR)
+					if res != null:
+						surfTool.add_triangle_fan(res[0],res[1], res[2])
+				
+				#Cube front if on chunk edge
+				if x == 0:
+					
+					res = _get_vertical_x(x-1,z,y, current_type, BLOCK_TYPE.AIR)
+					if res != null:
+						surfTool.add_triangle_fan(res[0],res[1], res[2])
+				
+				#Cube right
+				if z >= (chunk[x].size() -1):
+					next_type = BLOCK_TYPE.AIR
+				else:
+					next_type = chunk[x][z+1][y]
+				res = _get_vertical_z(x,z,y, current_type, next_type)
 				if res != null:
 					surfTool.add_triangle_fan(res[0],res[1], res[2])
 
-				res = _get_vertical_x(x,z,y)
+				# Cube back
+				if x >= (chunk.size() - 1):
+					next_type = BLOCK_TYPE.AIR
+				else:
+					next_type = chunk[x+1][z][y]
+				res = _get_vertical_x(x,z,y, current_type, next_type)
 				if res != null:
 					surfTool.add_triangle_fan(res[0],res[1], res[2])
-
-				res = _get_horizontal(x,z,y)
+								
+				# Cube top
+				if y >= (chunk[x][z].size() - 1):
+					next_type = BLOCK_TYPE.AIR
+				else:
+					next_type = chunk[x][z][y+1]
+				res = _get_horizontal(x,z,y, current_type, next_type)
 				if res != null:
 					surfTool.add_triangle_fan(res[0],res[1], res[2])
 
@@ -230,20 +261,22 @@ func _render_mesh():
 	meshInstance.create_trimesh_collision()
 
 
-func _get_horizontal(x, z, y):
-	var current_type  = chunk[x][z][y]
+func _block_type_is_transparent(type):
+	if type == BLOCK_TYPE.AIR:
+		return true
+		
+	return false
+	
 
-	var next_type
-	if y >= (chunk[x][z].size() - 1):
-		next_type = BLOCK_TYPE.AIR
-	else:
-		next_type = chunk[x][z][y+1]
-
-
+func _get_horizontal(x, z, y, current_type, next_type):
+	xoffset = x*cubesize
+	zoffset = z*cubesize
+	yoffset = y*cubesize
+	
 	if current_type == next_type:
 		return null
 
-	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
+	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
 		return null
 
 	v1 = Vector3(xoffset+0,       yoffset, zoffset+0)
@@ -253,19 +286,15 @@ func _get_horizontal(x, z, y):
 
 	return _get_rect(v1,v2,v3,v4)
 
-func _get_vertical_x(x,z,y):
-	var current_type  = chunk[x][z][y]
-
-	var next_type
-	if x >= (chunk.size() - 1):
-		next_type = BLOCK_TYPE.AIR
-	else:
-		next_type = chunk[x+1][z][y]
-
+func _get_vertical_x(x,z,y, current_type, next_type):
+	xoffset = x*cubesize
+	zoffset = z*cubesize
+	yoffset = y*cubesize
+	
 	if current_type == next_type:
 		return null
 
-	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
+	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
 		return null
 
 	# This z compensation is strange
@@ -279,20 +308,15 @@ func _get_vertical_x(x,z,y):
 
 	return _get_rect(v1,v2,v3,v4)
 
-func _get_vertical_z(x,z,y):
-
-	var current_type  = chunk[x][z][y]
-
-	var next_type
-	if z >= (chunk[x].size() -1):
-		next_type = BLOCK_TYPE.AIR
-	else:
-		next_type = chunk[x][z+1][y]
-
+func _get_vertical_z(x,z,y, current_type, next_type):
+	xoffset = x*cubesize
+	zoffset = z*cubesize
+	yoffset = y*cubesize
+	
 	if current_type == next_type:
 		return null
 
-	if current_type == BLOCK_TYPE.AIR and next_type == BLOCK_TYPE.AIR:
+	if _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
 		return null
 
 	# This z compensation is strange

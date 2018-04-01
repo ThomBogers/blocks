@@ -10,8 +10,8 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var seeds = Vector2(randf()/15, randf()/3)
-	for x in range(2):
-		for z in range(2):
+	for x in range(5):
+		for z in range(5):
 
 			var offset = Vector3(x, 0, z)
 			var chunk = Chunk.instance()
