@@ -8,7 +8,7 @@
 
 [sub_resource type="CapsuleShape" id=1]
 
-radius = 0.7
+radius = 0.4
 height = 1.0
 
 [sub_resource type="CapsuleMesh" id=2]
@@ -70,7 +70,7 @@ proximity_fade_enable = false
 distance_fade_enable = false
 _sections_unfolded = [ "Flags" ]
 
-[node name="Player" type="KinematicBody"]
+[node name="Player" type="KinematicBody" index="0"]
 
 input_ray_pickable = true
 input_capture_on_drag = false

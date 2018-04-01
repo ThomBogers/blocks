@@ -49,6 +49,7 @@ var chunkSeeds = Vector2(0,0)
 enum BLOCK_TYPE {
 	AIR
 	DIRT
+	BEDROCK
 }
 
 func init(offset, seeds):
@@ -60,8 +61,8 @@ func init(offset, seeds):
 	collInstance = get_node("CollisionShape")
 	chunkSeeds = seeds
 
-	#_build_chunk_simplex_3d()
-	_build_chunk_simplex_2d()
+	_build_chunk_simplex_3d()
+	#_build_chunk_simplex_2d()
 	_render_mesh()
 
 func hit(collision, type):
@@ -96,6 +97,9 @@ func hit(collision, type):
 		print("Out of y_pos range")
 		return
 
+	if chunk[x_pos][z_pos][y_pos] == BLOCK_TYPE.BEDROCK:
+		return
+
 	if type == EQUIPMENT.TYPES.ARM:
 		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.AIR
 	elif type == EQUIPMENT.TYPES.DIRT:
@@ -128,7 +132,9 @@ func _build_chunk_simplex_2d():
 				ymin = h
 
 			for y in range(chunksize.y):
-				if y <= h:
+				if y == 0:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif y <= h:
 					chunk[x][z].append(BLOCK_TYPE.DIRT)
 				else:
 					chunk[x][z].append(BLOCK_TYPE.AIR)
@@ -159,7 +165,9 @@ func _build_chunk_simplex_3d():
 				if h < ymin:
 					ymin = h
 
-				if y <= h:
+				if y == 0:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif y <= h:
 					chunk[x][z].append(BLOCK_TYPE.DIRT)
 				else:
 					chunk[x][z].append(BLOCK_TYPE.AIR)

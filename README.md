@@ -21,7 +21,6 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Add textures to kubelets (Add color item to quad, and set color in shader?)
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Add projectiles
- - Improve hit location detection
  - Add multipe chunk functionality
  	- Add loader for first chunk render
  	- Move mesh generation to native code

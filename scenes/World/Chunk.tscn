@@ -65,7 +65,7 @@ height = 2.0
 radial_segments = 64
 rings = 4
 
-[node name="Chunk" type="StaticBody" index="0"]
+[node name="Chunk" type="StaticBody"]
 
 input_ray_pickable = true
 input_capture_on_drag = false
