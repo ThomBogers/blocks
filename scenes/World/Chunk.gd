@@ -177,11 +177,7 @@ func _build_chunk_simplex_3d():
 func _render_mesh():
 	thread.start(self, "_render_mesh_thread", null, 0)
 
-func _process(delta):
-	if not thread.is_active():
-		thread.wait_to_finish()
-
-func _render_mesh_thread(userdata):
+func _render_mesh_thread(params):
 
 	# Remove old collision mesh if present
 	var coll = meshInstance.get_children()
@@ -255,6 +251,7 @@ func _render_mesh_thread(userdata):
 
 	meshInstance.set_mesh(mesh)
 	meshInstance.create_trimesh_collision()
+	params.thread.call_deferred("wait_to_finish")
 
 
 func _block_type_is_transparent(type):
