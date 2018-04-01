@@ -62,70 +62,44 @@ func init(offset, seeds):
 
 	#_build_chunk_simplex_3d()
 	_build_chunk_simplex_2d()
-	#_build_chunk_test2()
 	_render_mesh()
 
-
 func hit(collision, type):
+
+	print("Collistion: ", collision)
 
 	# Calculate direction of collision
 
 	# Create position relative to chunk position
 	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
+	print("Relative Position: ", relPosition)
 
-	print("COLL: ", collision)
-	print("ISARM: ", type == EQUIPMENT.TYPES.ARM)
-
-	var DIRFLIP = 0
+	var hitDirection
 	if type != EQUIPMENT.TYPES.ARM:
-		DIRFLIP = 1
+		hitDirection = Vector3(collision.normal.x*(cubesize/2), collision.normal.y*(cubesize/2), collision.normal.z*(cubesize/2))
+	else:
+		hitDirection = Vector3(-collision.normal.x*(cubesize/2), -collision.normal.y*(cubesize/2), -collision.normal.z*(cubesize/2))
 
-	var x_pos = floor(relPosition.x/cubesize)
-	var z_pos = floor(relPosition.z/cubesize)
-	var y_pos = floor(relPosition.y/cubesize)
+	var x_pos = floor((relPosition.x+hitDirection.x)/cubesize)
+	var z_pos = floor((relPosition.z+hitDirection.z)/cubesize)
+	var y_pos = floor((relPosition.y+hitDirection.y)/cubesize) + 1
 
-	var x_tar = x_pos
-	var z_tar = z_pos
-	var y_tar = y_pos
+	print("X: ", x_pos, " Z: ", z_pos, " Y: ", y_pos , "\n" )
 
-	if collision.normal.x == -1:
-		x_tar += (DIRFLIP * collision.normal.x)
-		y_tar += DIRFLIP
-	elif collision.normal.x == 1:
-		y_tar += DIRFLIP
-
-	elif collision.normal.z == -1:
-		z_tar += (DIRFLIP * collision.normal.z)
-		y_tar += DIRFLIP
-	elif collision.normal.z == 1:
-		y_tar += DIRFLIP
-
-	elif collision.normal.y == -1:
-		y_tar += (DIRFLIP * collision.normal.y)
-	elif collision.normal.y == 1:
-		y_tar += (DIRFLIP * collision.normal.y)
-
-
-	print("Norm: ", collision.normal)
-	print("Hit at x_pos: ", x_pos, " x_tar: ", x_tar)
-	print("Hit at z_pos: ", z_pos, " z_tar: ", z_tar)
-	print("Hit at y_pos: ", y_pos, " y_tar: ", y_tar)
-
-
-	if x_tar > chunk.size()-1:
-		print("Out of x_tar range")
+	if x_pos > chunk.size()-1:
+		print("Out of x_pos range")
 		return
-	if z_tar > chunk[x_tar].size()-1:
-		print("Out of z_tar range")
+	if z_pos > chunk[x_pos].size()-1:
+		print("Out of z_pos range")
 		return
-	if y_tar > chunk[x_tar][z_tar].size()-1:
-		print("Out of y_tar range")
+	if y_pos > chunk[x_pos][z_pos].size()-1:
+		print("Out of y_pos range")
 		return
 
 	if type == EQUIPMENT.TYPES.ARM:
-		chunk[x_tar][z_tar][y_tar] = BLOCK_TYPE.AIR
+		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.AIR
 	elif type == EQUIPMENT.TYPES.DIRT:
-		chunk[x_tar][z_tar][y_tar] = BLOCK_TYPE.DIRT
+		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.DIRT
 	else:
 		print("UNKOWN HIT TYPE: ", type)
 
