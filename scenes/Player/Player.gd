@@ -109,13 +109,17 @@ func _physics_process(delta):
 
 func _h_move(delta):
 	var movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
-	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
-
-	if on_floor:
-		movement = movement * SPEED_WALK * delta
+	
+	if MODE == FLYING:
+		player.translate(movement)
 	else:
-		movement = movement * SPEED_AIR * delta
-	player.move_and_collide(movement)
+		movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
+
+		if on_floor:
+			movement = movement * SPEED_WALK * delta
+		else:
+			movement = movement * SPEED_AIR * delta
+		player.move_and_collide(movement)
 
 func _v_move(delta):
 
@@ -124,11 +128,15 @@ func _v_move(delta):
 		movement_vector.y = movement_vector.y + delta*GRAVITY
 
 	var movement = Vector3(0, movement_vector.y, 0)
-	var collision = player.move_and_collide(movement)
 
-	if collision != null and collision.normal.y != 0:
-		on_floor = true
-		movement_vector.y = 0
+	if MODE == FLYING:
+		player.translate(movement)
+	else:	
+		var collision = player.move_and_collide(movement)
+
+		if collision != null and collision.normal.y != 0:
+			on_floor = true
+			movement_vector.y = 0
 
 #func _process(delta):
 #	pass

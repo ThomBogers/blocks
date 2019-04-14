@@ -8,15 +8,18 @@ var collInstance = null
 export(Material) var material
 
 #var material = load("res://materials/world_spatialmaterial.tres")
-var simplex = load("res://modules/Godot-Helpers/Simplex/Simplex.gd")
+var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 
 var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 
-const cubesize  = 2
-const chunksize = Vector3(16, 64, 16)
+const cubesize  = 1
+const chunksize = Vector3(32, 64, 32)
 var chunkoffset = Vector3(0,0,0)
+var chunkId = 0
 
 var chunk = []
+var chunkInitialised = false
+var clean = false
 
 var uvarray = []
 var varray  = []
@@ -43,10 +46,10 @@ var c4
 var should_ret  = false
 var should_flip = false
 
-var thread = Thread.new()
-
 # Seeds for terain gen
-var chunkSeeds = Vector2(0,0)
+var worldseed
+
+var thread
 
 enum BLOCK_TYPE {
 	AIR
@@ -54,40 +57,40 @@ enum BLOCK_TYPE {
 	BEDROCK
 }
 
-func init(offset, seeds):
-	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, 0, offset.z*chunksize.x*cubesize)
+func logMessage(message: String):
+	print( "ID: ", chunkId, " ", message)
+
+func init(id: int, offset: Vector3, _worldseed: int):
+	chunkId = id
+	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, 0, offset.z*chunksize.z*cubesize)
 	this = get_node(".")
 	this.translate(chunkoffset)
 
 	meshInstance = get_node("CollisionShape/MeshInstance")
 	collInstance = get_node("CollisionShape")
-	chunkSeeds = seeds
-
-	#_build_chunk_simplex_3d()
-	_build_chunk_simplex_2d()
-	_render_mesh()
+	worldseed = _worldseed
 
 func hit(collision, type):
 
-	print("Collistion: ", collision)
+	logMessage("Collistion: " + str(collision))
 
 	# Calculate direction of collision
 
 	# Create position relative to chunk position
 	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
-	print("Relative Position: ", relPosition)
+	logMessage("Relative Position: " + str(relPosition))
 
 	var hitDirection
 	if type != EQUIPMENT.TYPES.ARM:
-		hitDirection = Vector3(collision.normal.x*(cubesize/2), collision.normal.y*(cubesize/2), collision.normal.z*(cubesize/2))
+		hitDirection = Vector3(collision.normal.x*(cubesize/2.0), collision.normal.y*(cubesize/2.0), collision.normal.z*(cubesize/2.0))
 	else:
-		hitDirection = Vector3(-collision.normal.x*(cubesize/2), -collision.normal.y*(cubesize/2), -collision.normal.z*(cubesize/2))
+		hitDirection = Vector3(-collision.normal.x*(cubesize/2.0), -collision.normal.y*(cubesize/2.0), -collision.normal.z*(cubesize/2.0))
 
 	var x_pos = floor((relPosition.x+hitDirection.x)/cubesize)
 	var z_pos = floor((relPosition.z+hitDirection.z)/cubesize)
 	var y_pos = floor((relPosition.y+hitDirection.y)/cubesize) + 1
 
-	print("X: ", x_pos, " Z: ", z_pos, " Y: ", y_pos , "\n" )
+	logMessage("X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos)  + "\n" )
 
 	if x_pos > chunk.size()-1:
 		print("Out of x_pos range")
@@ -107,52 +110,30 @@ func hit(collision, type):
 	elif type == EQUIPMENT.TYPES.DIRT:
 		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.DIRT
 	else:
-		print("UNKOWN HIT TYPE: ", type)
+		logMessage("UNKOWN HIT TYPE: "+ str(type))
 
-	_render_mesh()
-
-
-func _build_chunk_simplex_2d():
-	var ymin = chunksize.y
-
-	var ox = (chunkoffset.x/cubesize)
-	var oz = (chunkoffset.z/cubesize)
-	var oy = (chunkoffset.y/cubesize)
-	var empty = true
-	var yoffset = 17
-
-	for x in range(chunksize.x):
-		chunk.append([])
-		for z in range(chunksize.z):
-			chunk[x].append([])
-
-			var n1 = simplex.simplex2(chunkSeeds.x*(ox+x), chunkSeeds.x*(oz+z))
-			var n2 = simplex.simplex2(chunkSeeds.y*(ox+x+100.0), chunkSeeds.y*(oz+z))
-			var h = 16.0*n1 + 4.0*n2 + yoffset - oy
-
-			if h < ymin:
-				ymin = h
-
-			for y in range(chunksize.y):
-				if y == 0:
-					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
-				elif y <= h:
-					chunk[x][z].append(BLOCK_TYPE.DIRT)
-				else:
-					chunk[x][z].append(BLOCK_TYPE.AIR)
+	clean = false
 
 
-func _build_chunk_simplex_3d():
-	var ymin = chunksize.y
+func render(_thread):
+	if not _thread.is_active():
+		thread = _thread
+		clean = true
+		thread.start(self, "_render_mesh_thread", {}, 2)
 
-	var ox = (chunkoffset.x/chunksize.x)/cubesize
-	var oz = (chunkoffset.z/chunksize.z)/cubesize
-	var oy = (chunkoffset.y/chunksize.y)/cubesize
-	var empty = true
-	var ns1 = randf()/10
-	var ns2 = randf()/2
+func renderEnd():
+	logMessage("renderDone wait_to_finish ")
+	thread.wait_to_finish();
+	thread = null
+	logMessage("renderDone end ")
 
-	var yfact = 5
+
+func _build_chunk_opensimplex_3d():
+	noise.seed = worldseed
+	noise.lacunarity = 2
+	noise.octaves = 4
+	noise.period = 100.0
+	noise.persistence = 0.8
 
 	for x in range(chunksize.x):
 		chunk.append([])
@@ -160,41 +141,30 @@ func _build_chunk_simplex_3d():
 			chunk[x].append([])
 
 			for y in range(chunksize.y):
-				var n1 = simplex.simplex3(ns1*(ox+x), ns1*(oz+z), ns1*(oy+y)*yfact)
-				var n2 = simplex.simplex3(ns2*(ox+x+100.0), ns2*(oz+z), ns2*(oy+y)*yfact)
-				var h = 16.0*n1 + 4.0*n2 + 16 - oy
+				var cube_x = (chunkoffset.x) + x
+				var cube_z = (chunkoffset.z) + z
+				var cube_y = (chunkoffset.y) + y
 
-				if h < ymin:
-					ymin = h
-
-				if y == 0:
+				if cube_y == 0:
 					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
-				elif y <= h:
-					chunk[x][z].append(BLOCK_TYPE.DIRT)
 				else:
-					chunk[x][z].append(BLOCK_TYPE.AIR)
-
-func _render_mesh():
-	thread.start(self, "_render_mesh_thread", null, 0)
+					var type = noise.get_noise_3d(cube_x, cube_z, cube_y)
+					if type < 0:
+						chunk[x][z].append(BLOCK_TYPE.DIRT)
+					elif type >= 0:
+						chunk[x][z].append(BLOCK_TYPE.AIR)
 
 func _render_mesh_thread(params):
 
-	# Remove old collision mesh if present
-	var coll = meshInstance.get_children()
-	if not coll.empty():
-		for item in coll:
-			item.queue_free()
-
-	meshInstance.set_material_override(material)
+	if(!chunkInitialised):
+		_build_chunk_opensimplex_3d()
+		chunkInitialised = true
 
 	var surfTool = SurfaceTool.new()
 	var mesh     = Mesh.new()
 
 	surfTool.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var x = 0
-	var z = 0
-	var y = 0
 	var res
 	var next_type
 	var current_type
@@ -249,10 +219,17 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
+	meshInstance.set_material_override(material)
 	meshInstance.set_mesh(mesh)
-	meshInstance.create_trimesh_collision()
-	params.thread.call_deferred("wait_to_finish")
 
+	# Remove old collision mesh if present
+	meshInstance.create_trimesh_collision()
+	var coll = meshInstance.get_children()
+	if coll.size() > 1:
+		coll[0].queue_free()
+
+	call_deferred('renderEnd')
+	return;
 
 func _block_type_is_transparent(type):
 	if type == BLOCK_TYPE.AIR:
