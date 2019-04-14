@@ -17,7 +17,6 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
 
 ## Todo
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
- - Change kubelet shape to d20 die (icosahedron)
  - Add textures to kubelets (Add color item to quad, and set color in shader?)
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Add projectiles
@@ -25,7 +24,6 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  	- Add loader for first chunk render
  	- Move mesh generation to native code
  	- Store chunk data more efficiently than just an array
- 	- Improve world generation algorithm: https://thebookofshaders.com/13/
-  - add godot go native binding
   - prevent block placement at occupied position 
-  - Play around with threading chunk rendering (maybe create limited threadpool for rendering chunks?)
+  - Do not use clean flag to re-render on chunk.hit
+  - Find better way to retry theardpool.get_thread than timer in World.gd
