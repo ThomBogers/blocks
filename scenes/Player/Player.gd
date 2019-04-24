@@ -1,10 +1,9 @@
 extends Spatial
 
-
-const GRAVITY    = -9.8/2
-const SPEED_JUMP = 1
-const SPEED_WALK = 15
-const SPEED_AIR  = 15
+const GRAVITY    = -9.81
+const SPEED_JUMP = 2.45
+const SPEED_WALK = 60
+const SPEED_AIR  = 60
 
 const FLYING  = 0
 const WALKING = 1

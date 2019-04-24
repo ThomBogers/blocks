@@ -12,7 +12,7 @@ var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 
 var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 
-const cubesize  = 1
+const cubesize  = 16
 const chunksize = Vector3(32, 64, 32)
 var chunkoffset = Vector3(0,0,0)
 var chunkId = 0

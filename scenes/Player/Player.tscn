@@ -8,6 +8,7 @@
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.4
+height = 16.0
 
 [sub_resource type="CapsuleMesh" id=2]
 radius = 0.7
@@ -38,7 +39,7 @@ script = ExtResource( 3 )
 
 [node name="Camera" type="InterpolatedCamera" parent="."]
 fov = 90.0
-far = 300.0
+far = 4800.0
 target = NodePath("..")
 script = ExtResource( 4 )
 
