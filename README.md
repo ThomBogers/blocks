@@ -20,10 +20,6 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Add textures to kubelets (Add color item to quad, and set color in shader?)
  - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Add projectiles
- - Add multipe chunk functionality
- 	- Add loader for first chunk render
- 	- Move mesh generation to native code
- 	- Store chunk data more efficiently than just an array
-  - prevent block placement at occupied position 
-  - Do not use clean flag to re-render on chunk.hit
-  - Find better way to retry theardpool.get_thread than timer in World.gd
+ - prevent block placement at occupied position 
+ - Do not use clean flag to re-render on chunk.hit
+ - Find better way to retry theardpool.get_thread than timer in World.gd
