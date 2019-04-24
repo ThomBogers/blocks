@@ -3,20 +3,21 @@
 importer="texture"
 type="StreamTexture"
 path="res://.import/croshair.png-3ab016273200dcd21eba19dc37d56de9.stex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://images/raw/croshair.png"
-source_md5="13c8a954b7de2186ef13a1d5c7143d3e"
-
 dest_files=[ "res://.import/croshair.png-3ab016273200dcd21eba19dc37d56de9.stex" ]
-dest_md5="31f3ba9a905ef8d2ae400d90bbc76466"
 
 [params]
 
 compress/mode=0
 compress/lossy_quality=0.7
 compress/hdr_mode=0
+compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
 flags/filter=true
@@ -26,6 +27,7 @@ flags/srgb=2
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
+process/invert_color=false
 stream=false
 size_limit=0
 detect_3d=true

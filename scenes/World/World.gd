@@ -4,12 +4,12 @@ extends Spatial
 # var a = 2
 # var b = "textvar"
 onready var player = get_node("./Player")
+onready var threadpool = get_node("../Threadpool")
 
 var Chunk = preload("res://scenes/World/Chunk.tscn")
 onready var chunk = Chunk.instance()
 
-const world_size = 2
-var seeds = Vector2(randf()/15, randf()/3)
+const world_radius = 1
 
 var _timer = null
 
@@ -35,19 +35,21 @@ func _ready():
 	)
 
 	_draw_surround()
-
 	pass
 
 func _draw_surround():
+	var _worldseed = randi()
 	var current_chunk = _get_player_chunk_loc()
+	var id = 0
 
-	for x in range(-world_size, world_size):
-		for z in range(-world_size, world_size):
+	for x in range(-world_radius, world_radius):
+		for z in range(-world_radius, world_radius):
 			var key = str(current_chunk.x+x)+":"+str(current_chunk.z+z)
 			if not chunk_dict.has(key):
 				var offset = Vector3(current_chunk.x+x, 0, current_chunk.z+z)
 				var chunk = Chunk.instance()
-				chunk.init(offset, seeds)
+				chunk.init(id, offset, _worldseed)
+				id+=1
 				add_child(chunk)
 				chunk_dict[key] = chunk
 
@@ -64,5 +66,11 @@ func _get_player_chunk_loc():
 	return current_chunk
 
 func _on_Timer_timeout():
-	_draw_surround()
+	for key in chunk_dict.keys():
+		var chunk = chunk_dict.get(key)
+		if not chunk.clean:
+			var thread = threadpool.get_thread()
+			if(thread == null):
+				return;
+			chunk.render(thread)
 

@@ -1,14 +1,13 @@
 extends Spatial
 
-
-const GRAVITY    = -9.8/2
-const SPEED_JUMP = 1
-const SPEED_WALK = 15
-const SPEED_AIR  = 15
+const GRAVITY    = -9.81
+const SPEED_JUMP = 2.45
+const SPEED_WALK = 60
+const SPEED_AIR  = 60
 
 const FLYING  = 0
 const WALKING = 1
-var MODE = WALKING
+var MODE = FLYING
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
@@ -109,13 +108,17 @@ func _physics_process(delta):
 
 func _h_move(delta):
 	var movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
-	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
-
-	if on_floor:
-		movement = movement * SPEED_WALK * delta
+	
+	if MODE == FLYING:
+		player.translate(movement)
 	else:
-		movement = movement * SPEED_AIR * delta
-	player.move_and_collide(movement)
+		movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
+
+		if on_floor:
+			movement = movement * SPEED_WALK * delta
+		else:
+			movement = movement * SPEED_AIR * delta
+		player.move_and_collide(movement)
 
 func _v_move(delta):
 
@@ -124,11 +127,15 @@ func _v_move(delta):
 		movement_vector.y = movement_vector.y + delta*GRAVITY
 
 	var movement = Vector3(0, movement_vector.y, 0)
-	var collision = player.move_and_collide(movement)
 
-	if collision != null and collision.normal.y != 0:
-		on_floor = true
-		movement_vector.y = 0
+	if MODE == FLYING:
+		player.translate(movement)
+	else:	
+		var collision = player.move_and_collide(movement)
+
+		if collision != null and collision.normal.y != 0:
+			on_floor = true
+			movement_vector.y = 0
 
 #func _process(delta):
 #	pass

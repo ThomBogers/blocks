@@ -15,6 +15,8 @@ func _ready():
 	get_tree().get_root().connect("size_changed", self, "set_viewport_size")
 	set_viewport_size()
 
+	camera.fov = 100
+
 	pass
 
 func set_viewport_size():
