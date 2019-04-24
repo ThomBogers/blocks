@@ -7,16 +7,16 @@ var collInstance = null
 
 export(Material) var material
 
-#var material = load("res://materials/world_spatialmaterial.tres")
 var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 
 var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
+var CONSTANTS = load("res://scenes/Util/constants.gd")
 
-const cubesize  = 16
-const chunksize = Vector3(32, 64, 32)
 var chunkoffset = Vector3(0,0,0)
 var chunkId = 0
 
+var cubesize
+var chunksize
 var chunk = []
 var chunkInitialised = false
 var clean = false
@@ -61,6 +61,9 @@ func logMessage(message: String):
 	print( "ID: ", chunkId, " ", message)
 
 func init(id: int, offset: Vector3, _worldseed: int):
+	cubesize = CONSTANTS.CUBESIZE
+	chunksize = CONSTANTS.CHUNKSIZE
+
 	chunkId = id
 	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, 0, offset.z*chunksize.z*cubesize)
 	this = get_node(".")

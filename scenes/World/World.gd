@@ -6,10 +6,8 @@ extends Spatial
 onready var player = get_node("./Player")
 onready var threadpool = get_node("../Threadpool")
 
+var CONSTANTS = load("res://scenes/Util/constants.gd")
 var Chunk = preload("res://scenes/World/Chunk.tscn")
-onready var chunk = Chunk.instance()
-
-const world_radius = 1
 
 var _timer = null
 
@@ -28,9 +26,9 @@ func _ready():
 	_timer.start()
 
 	player.translate(Vector3(
-		chunk.cubesize*chunk.chunksize.x/2,
-		chunk.cubesize*chunk.chunksize.y/2,
-		chunk.cubesize*chunk.chunksize.z/2
+		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.x/2,
+		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.y/2,
+		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.z/2
 		)
 	)
 
@@ -42,8 +40,8 @@ func _draw_surround():
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
 
-	for x in range(-world_radius, world_radius):
-		for z in range(-world_radius, world_radius):
+	for x in range(-CONSTANTS.WORLDRADIUS, CONSTANTS.WORLDRADIUS):
+		for z in range(-CONSTANTS.WORLDRADIUS, CONSTANTS.WORLDRADIUS):
 			var key = str(current_chunk.x+x)+":"+str(current_chunk.z+z)
 			if not chunk_dict.has(key):
 				var offset = Vector3(current_chunk.x+x, 0, current_chunk.z+z)
@@ -58,9 +56,9 @@ func _get_player_chunk_loc():
 	var location = player.translation
 
 	var current_chunk = Vector3(
-		floor(location.x/(chunk.cubesize*chunk.chunksize.x)),
-		floor(location.y/(chunk.cubesize*chunk.chunksize.y)),
-		floor(location.z/(chunk.cubesize*chunk.chunksize.z))
+		floor(location.x/(CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.x)),
+		floor(location.y/(CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.y)),
+		floor(location.z/(CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.z))
 	)
 
 	return current_chunk

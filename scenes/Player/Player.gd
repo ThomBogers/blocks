@@ -1,6 +1,8 @@
 extends Spatial
 
-const GRAVITY    = -9.81
+var CONSTANTS = load("res://scenes/Util/constants.gd")
+
+const GRAVITY     = -9.81
 const SPEED_JUMP = 2.45
 const SPEED_WALK = 60
 const SPEED_AIR  = 60
@@ -11,6 +13,7 @@ var MODE = FLYING
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
+onready var collider = get_node("PlayerCollider")
 
 var on_floor = false
 
@@ -25,6 +28,8 @@ var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+
+	collider.shape.height = CONSTANTS.CUBESIZE;
 
 	# Enable processing input
 	set_process_input(true)
@@ -108,7 +113,7 @@ func _physics_process(delta):
 
 func _h_move(delta):
 	var movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
-	
+
 	if MODE == FLYING:
 		player.translate(movement)
 	else:
@@ -130,7 +135,7 @@ func _v_move(delta):
 
 	if MODE == FLYING:
 		player.translate(movement)
-	else:	
+	else:
 		var collision = player.move_and_collide(movement)
 
 		if collision != null and collision.normal.y != 0:
