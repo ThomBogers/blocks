@@ -9,15 +9,15 @@ const SPEED_AIR  = 60
 
 const FLYING  = 0
 const WALKING = 1
+const MAX_JUMPS = 2
 var MODE = FLYING
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
 onready var collider = get_node("PlayerCollider")
 
-var on_floor = false
-
 var movement_vector = Vector3(0,0,0)
+var jumps = 0
 var yaw   = 45
 var pitch = 45
 const view_sensitivity = 1
@@ -41,10 +41,13 @@ func _input(event):
 	if event.is_action_pressed("game_godmode"):
 		if MODE == FLYING:
 			MODE = WALKING
+			player.set_collision_layer_bit(0,1)
+			player.set_collision_mask_bit(0,1)
 		else:
 			movement_vector.y = 0
 			MODE = FLYING
-
+			player.set_collision_layer_bit(0,0)
+			player.set_collision_mask_bit(0,0)
 	if event is InputEventMouseMotion:
 		var relative_x = event.relative.x
 		var relative_y = event.relative.y
@@ -74,9 +77,10 @@ func _input(event):
 		movement_vector.z = 0
 
 	if MODE == WALKING:
-		if on_floor && event.is_action_pressed("game_up"):
+		if event.is_action_pressed("game_up") && jumps < MAX_JUMPS:
+			print("JUMP TIME")
+			jumps = jumps + 1
 			movement_vector.y = SPEED_JUMP
-			on_floor = false
 	else:
 		if event.is_action_pressed("game_up"):
 			movement_vector.y = SPEED_JUMP
@@ -103,44 +107,23 @@ func _input(event):
 
 
 func _physics_process(delta):
-	# Kinematicbody.move_and_collide moves relative to the world, not the object itself.
-	# The movement vector is rotated before being applied, this makes movement follow the camera direction
-	# Horizontal and vertical movement is hanled seperately because:
-	#	- We want to ignore rotation for direction of vertical movement
-	#	- Vertical movement causes collision while walking (camera angle looking into the floor), slowing the movement
-	_h_move(delta)
-	_v_move(delta)
 
-func _h_move(delta):
-	var movement = Vector3(movement_vector.x, 0, movement_vector.z).normalized()
-
-	if MODE == FLYING:
-		player.translate(movement)
-	else:
-		movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
-
-		if on_floor:
-			movement = movement * SPEED_WALK * delta
-		else:
-			movement = movement * SPEED_AIR * delta
-		player.move_and_collide(movement)
-
-func _v_move(delta):
-
+	var movement
 	if MODE == WALKING:
-		# Apply gravity every tick
 		movement_vector.y = movement_vector.y + delta*GRAVITY
-
-	var movement = Vector3(0, movement_vector.y, 0)
-
-	if MODE == FLYING:
-		player.translate(movement)
+		movement = movement_vector * SPEED_WALK
 	else:
-		var collision = player.move_and_collide(movement)
+		movement = movement_vector * SPEED_AIR
 
-		if collision != null and collision.normal.y != 0:
-			on_floor = true
+	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
+
+	player.move_and_slide( movement, Vector3(0,1,0) )
+
+	if player.get_slide_count():
+		var collision = player.get_slide_collision(0);
+
+		if collision.normal.y == 1:
+			jumps=0
 			movement_vector.y = 0
 
-#func _process(delta):
-#	pass
+

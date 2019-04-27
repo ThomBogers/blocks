@@ -28,21 +28,6 @@ var xoffset
 var zoffset
 var yoffset
 
-var uv1
-var uv2
-var uv3
-var uv4
-
-var v1
-var v2
-var v3
-var v4
-
-var c1
-var c2
-var c3
-var c4
-
 var should_ret  = false
 var should_flip = false
 
@@ -73,11 +58,9 @@ func init(id: int, offset: Vector3, _worldseed: int):
 	collInstance = get_node("CollisionShape")
 	worldseed = _worldseed
 
-func hit(collision, type):
+func hit(collision, type, origin):
 
 	logMessage("Collistion: " + str(collision))
-
-	# Calculate direction of collision
 
 	# Create position relative to chunk position
 	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
@@ -104,6 +87,9 @@ func hit(collision, type):
 	if y_pos > chunk[x_pos][z_pos].size()-1:
 		print("Out of y_pos range")
 		return
+
+	# TODO: Check distance from origin to center position of chunk[x_pos][z_pos][y_pos]
+	# return if distance < CONSTANTS.CUBESIZE/2
 
 	if chunk[x_pos][z_pos][y_pos] == BLOCK_TYPE.BEDROCK:
 		return
@@ -157,16 +143,35 @@ func _build_chunk_opensimplex_3d():
 					elif type >= 0:
 						chunk[x][z].append(BLOCK_TYPE.AIR)
 
+func _build_test_chunk():
+
+	for x in range(chunksize.x):
+		chunk.append([])
+		for z in range(chunksize.z):
+			chunk[x].append([])
+
+			for y in range(chunksize.y):
+				if x == 10:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				elif z == 10:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				# elif z == 10:
+				# 	chunk[x][z].append(BLOCK_TYPE.DIRT)
+				else:
+					chunk[x][z].append(BLOCK_TYPE.AIR)
+
 func _render_mesh_thread(params):
 
 	if(!chunkInitialised):
 		_build_chunk_opensimplex_3d()
+		# _build_test_chunk()
 		chunkInitialised = true
 
 	var surfTool = SurfaceTool.new()
 	var mesh     = Mesh.new()
 
 	surfTool.begin(Mesh.PRIMITIVE_TRIANGLES)
+	surfTool.set_material(material)
 
 	var res
 	var next_type
@@ -222,7 +227,7 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
-	meshInstance.set_material_override(material)
+	# meshInstance.set_material_override(material)
 	meshInstance.set_mesh(mesh)
 
 	# Remove old collision mesh if present
@@ -266,18 +271,36 @@ func _get_horizontal(x, z, y, current_type, next_type):
 	if should_ret:
 		return null
 
+	carray = _get_carray(current_type)
 	if should_flip:
-		v4 = Vector3(xoffset+0,       yoffset, zoffset+0)
-		v3 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
-		v2 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
-		v1 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
+		varray = [
+			Vector3(xoffset+0,       yoffset, zoffset+0), #v1
+			Vector3(xoffset+0,       yoffset, zoffset+cubesize), #v2
+			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v3
+			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v4
+		]
+		uvarray = [
+			Vector2(0,0), # uv1
+			Vector2(0,1), # uv2
+			Vector2(1,1), # uv3
+			Vector2(1,0), # uv4
+		]
 	else:
-		v1 = Vector3(xoffset+0,       yoffset, zoffset+0)
-		v2 = Vector3(xoffset+0,       yoffset, zoffset+cubesize)
-		v3 = Vector3(xoffset+cubesize,yoffset, zoffset+cubesize)
-		v4 = Vector3(xoffset+cubesize,yoffset, zoffset+0)
+		uvarray = [
+			Vector2(1,0), # uv4
+			Vector2(1,1), # uv3
+			Vector2(0,1), # uv2
+			Vector2(0,0),  # uv1
+		]
+		varray = [
+			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v1
+			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v2
+			Vector3(xoffset+0,       yoffset, zoffset+cubesize), #v3
+			Vector3(xoffset+0,       yoffset, zoffset+0), #v4
+		]
 
-	return _get_rect(v1,v2,v3,v4)
+
+	return [varray, uvarray, carray]
 
 func _get_vertical_x(x,z,y, current_type, next_type):
 	xoffset = x*cubesize
@@ -292,18 +315,31 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	if should_flip:
-		v4 = Vector3(xoffset+cubesize,yoff_top,zoffset)
-		v3 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-		v2 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-		v1 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
-	else:
-		v1 = Vector3(xoffset+cubesize,yoff_top,zoffset)
-		v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-		v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-		v4 = Vector3(xoffset+cubesize,yoff_bot,zoffset)
+	carray = _get_carray(current_type)
 
-	return _get_rect(v1,v2,v3,v4)
+	if should_flip:
+		varray = [
+			Vector3(xoffset+cubesize,yoff_top,zoffset), # v1 =
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize), # v2 =
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize), # v3 =
+			Vector3(xoffset+cubesize,yoff_bot,zoffset), # v4 =
+		]
+	else:
+			varray  = [
+				Vector3(xoffset+cubesize,yoff_bot,zoffset), #v1
+				Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize), #v2,
+				Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize), #v3,
+				Vector3(xoffset+cubesize,yoff_top,zoffset), #v4,
+			]
+
+	uvarray = [
+		Vector2(0,0), # uv1
+		Vector2(0,1), # uv2
+		Vector2(1,1), # uv3
+		Vector2(1,0), # uv4
+	]
+
+	return [varray, uvarray, carray]
 
 func _get_vertical_z(x,z,y, current_type, next_type):
 	xoffset = x*cubesize
@@ -318,48 +354,44 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	if should_flip:
-		v1 = Vector3(xoffset,yoff_top,zoffset+cubesize)
-		v2 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-		v3 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-		v4 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
+	carray = _get_carray(current_type)
+
+	if !should_flip:
+		varray = [
+			Vector3(xoffset,yoff_top,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset,yoff_bot,zoffset+cubesize),
+		]
 	else:
-		v4 = Vector3(xoffset,yoff_top,zoffset+cubesize)
-		v3 = Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize)
-		v2 = Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize)
-		v1 = Vector3(xoffset,yoff_bot,zoffset+cubesize)
-
-
-	return _get_rect(v1,v2,v3,v4)
-
-func _get_rect(v1,v2,v3,v4):
-	uvarray = []
-	varray  = []
-	carray  = []
-
-	uv1 = Vector2(0,0)
-	uv2 = Vector2(0,1)
-	uv3 = Vector2(1,1)
-	uv4 = Vector2(1,0)
-
-	c1 = Color(0,0,0.5)
-	c2 = Color(0,0,0.5)
-	c3 = Color(0,0,0.5)
-	c4 = Color(0,0,0.5)
-
-	uvarray.append(uv4)
-	uvarray.append(uv3)
-	uvarray.append(uv2)
-	uvarray.append(uv1)
-
-	varray.append(v4)
-	varray.append(v3)
-	varray.append(v2)
-	varray.append(v1)
-
-	carray.append(c4)
-	carray.append(c3)
-	carray.append(c2)
-	carray.append(c1)
-
+		varray = [
+			Vector3(xoffset,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
+			Vector3(xoffset,yoff_top,zoffset+cubesize),
+		]
+	uvarray = [
+		Vector2(0,0), # uv1
+		Vector2(0,1), # uv2
+		Vector2(1,1), # uv3
+		Vector2(1,0), # uv4
+	]
 	return [varray, uvarray, carray]
+
+func _get_carray(type):
+	var COLOR_GRAY = Color( 0.75, 0.75, 0.75, 1.0 )
+	var COLOR_BEIGE = Color( 0.96, 0.96, 0.86, 1.0 )
+	var COLOR_DARKGREEN = Color( 0, 0.39, 0, 1.0 )
+	var COLOR_NONE = Color( 0, 0, 0, 0 )
+
+	var dirtArray = PoolColorArray([COLOR_BEIGE,COLOR_BEIGE,COLOR_BEIGE,COLOR_BEIGE])
+	var grayArray = PoolColorArray([COLOR_GRAY,COLOR_GRAY,COLOR_GRAY,COLOR_GRAY])
+	var noneArray = PoolColorArray([COLOR_NONE,COLOR_NONE,COLOR_NONE,COLOR_NONE])
+
+	if type == BLOCK_TYPE.DIRT:
+		carray = dirtArray;
+	elif type == BLOCK_TYPE.BEDROCK:
+		carray = grayArray;
+	else:
+		carray = noneArray;
+	return carray

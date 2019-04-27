@@ -17,9 +17,9 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
 
 ## Todo
  - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
- - Add textures to kubelets (Add color item to quad, and set color in shader?)
- - Remove duplicate vertices when adding verticals/overlapping horizontals
  - Add projectiles
- - prevent block placement at occupied position 
  - Do not use clean flag to re-render on chunk.hit
  - Find better way to retry theardpool.get_thread than timer in World.gd
+ - prevent block placement at occupied position 
+ - introduce loading / options screen
+ - Add textures to kubelets (Add color item to quad, and set color in shader?)

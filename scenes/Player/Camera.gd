@@ -28,8 +28,8 @@ func cast_ray(type):
 	raycast_to   = raycast_from + camera.project_ray_normal(screen_center) * ray_length
 	raycast_type = type
 
-func hit_ray(target):
-	target.collider.get_node("../../..").hit(target, raycast_type)
+func hit_ray(target, origin):
+	target.collider.get_node("../../..").hit(target, raycast_type, origin)
 
 func _physics_process(delta):
 	if raycast_from != null && raycast_to != null:
@@ -37,7 +37,7 @@ func _physics_process(delta):
 		var result = space_state.intersect_ray(raycast_from, raycast_to, [self, camera, player, shap])
 		if not result.empty():
 			#Go from mesh in mesh instance to Geometry
-			hit_ray(result)
+			hit_ray(result, raycast_from)
 
 		raycast_from = null
 		raycast_to   = null

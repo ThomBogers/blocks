@@ -15,6 +15,7 @@ sun_energy = 16.0
 [sub_resource type="Environment" id=2]
 background_mode = 2
 background_sky = SubResource( 1 )
+background_energy = 0.1
 ambient_light_color = Color( 0.992188, 0.975231, 0.837158, 1 )
 fog_enabled = true
 fog_depth_begin = 100.0
@@ -35,6 +36,8 @@ environment = SubResource( 2 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.707107, -0.707107, -3.09086e-008, 0, -4.37114e-008, 1, -0.707107, -0.707107, -3.09086e-008, 0, 100, 0 )
+light_energy = 0.0
+directional_shadow_max_distance = 100.0
 
 [node name="Threadpool" type="Node" parent="."]
 script = ExtResource( 2 )
