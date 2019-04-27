@@ -48,13 +48,14 @@ func _input(event):
 			MODE = FLYING
 			player.set_collision_layer_bit(0,0)
 			player.set_collision_mask_bit(0,0)
+
 	if event is InputEventMouseMotion:
 		var relative_x = event.relative.x
 		var relative_y = event.relative.y
 
 		yaw   = fmod(yaw - relative_x * view_sensitivity, 360)
 		pitch = max(min(pitch - relative_y * view_sensitivity, 90), -90)
-		player.set_rotation(Vector3(deg2rad(pitch), deg2rad(yaw),0 ))
+		camera.set_rotation(Vector3(deg2rad(pitch), deg2rad(yaw),0 ))
 
 	if event.is_action_pressed("game_right"):
 		movement_vector.x = +1
@@ -92,8 +93,6 @@ func _input(event):
 		elif event.is_action_released("game_down"):
 			movement_vector.y = 0
 
-
-
 	# On click prepare raycast query to be executed in the physics loop
 	# raycast is based on center of screen
 	if event.is_action_pressed("game_click_left"):
@@ -114,6 +113,7 @@ func _physics_process(delta):
 		movement = movement_vector * SPEED_WALK
 	else:
 		movement = movement_vector * SPEED_AIR
+		movement = movement.rotated(Vector3(1,0,0),deg2rad(pitch))
 
 	movement = movement.rotated(Vector3(0,1,0),deg2rad(yaw))
 
