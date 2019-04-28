@@ -16,10 +16,11 @@ RIGHT MOUSE: Add block
 Screenshots of versions by githash may be found [here](docs/versions.md)
 
 ## Todo
- - Moving into wall while jumping causes vertical collision, resetting vertical velocity back to 0
- - Add projectiles
- - Do not use clean flag to re-render on chunk.hit
- - Find better way to retry theardpool.get_thread than timer in World.gd
- - prevent block placement at occupied position 
- - introduce loading / options screen
- - Fix textures for all sides of cubes, and fix direction
+ - Threading
+    - Do not use clean flag to re-render on chunk.hit
+    - Find better way to retry theardpool.get_thread than timer in World.gd
+ - Gameplay
+    - Add projectiles
+    - prevent block placement at occupied position 
+ - Misc
+    - introduce loading / options screen

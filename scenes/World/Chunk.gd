@@ -21,9 +21,11 @@ var chunk = []
 var chunkInitialised = false
 var clean = false
 
+var COLOR_NONE = Color(0,0,0,0)
+var carray = PoolColorArray([COLOR_NONE,COLOR_NONE,COLOR_NONE,COLOR_NONE])
 var uvarray = []
 var varray  = []
-var carray  = []
+
 var xoffset
 var zoffset
 var yoffset
@@ -33,7 +35,6 @@ var should_flip = false
 
 # Seeds for terain gen
 var worldseed
-
 var thread
 
 enum BLOCK_TYPE {
@@ -41,14 +42,6 @@ enum BLOCK_TYPE {
 	DIRT
 	BEDROCK
 }
-
-func _get_texture_slot(y: int, x: int):
-	return [
-		Vector2(y,x), # uv4
-		Vector2(y,x+1), # uv3
-		Vector2(y+1,x+1), # uv2
-		Vector2(y+1,x),  # uv1
-	]
 
 func logMessage(message: String):
 	print( "ID: ", chunkId, " ", message)
@@ -247,6 +240,47 @@ func _render_mesh_thread(params):
 	call_deferred('renderEnd')
 	return;
 
+
+func _get_texture_slot(current_type, next_type, top, flip):
+	var y
+	var x
+	var type
+
+	if !_block_type_is_transparent(current_type):
+		type = current_type
+	elif !_block_type_is_transparent(next_type):
+		type = next_type
+	else:
+		print("This should not happen right?")
+
+	if type == BLOCK_TYPE.BEDROCK:
+		y = 0
+		x = 2
+	elif type == BLOCK_TYPE.DIRT && top:
+		y = 1
+		x = 2
+	elif type == BLOCK_TYPE.DIRT:
+		y = 1
+		x = 0
+	else:
+		y = 0
+		x = 0
+
+	if flip:
+		return [
+			Vector2(y,x), # uv4
+			Vector2(y+1,x),  # uv1
+			Vector2(y+1,x+1), # uv2
+			Vector2(y,x+1), # uv3
+		]
+	else:
+		return [
+			Vector2(y+1,x+1), # uv2
+			Vector2(y,x+1), # uv3
+			Vector2(y,x), # uv4
+			Vector2(y+1,x),  # uv1
+		]
+
 func _block_type_is_transparent(type):
 	if type == BLOCK_TYPE.AIR:
 		return true
@@ -279,7 +313,6 @@ func _get_horizontal(x, z, y, current_type, next_type):
 	if should_ret:
 		return null
 
-	carray = _get_carray(current_type)
 	if should_flip:
 		varray = [
 			Vector3(xoffset+0,       yoffset, zoffset+0), #v1
@@ -287,6 +320,7 @@ func _get_horizontal(x, z, y, current_type, next_type):
 			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v3
 			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v4
 		]
+
 	else:
 		varray = [
 			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v1
@@ -294,12 +328,8 @@ func _get_horizontal(x, z, y, current_type, next_type):
 			Vector3(xoffset+0,       yoffset, zoffset+cubesize), #v3
 			Vector3(xoffset+0,       yoffset, zoffset+0), #v4
 		]
-	if current_type == BLOCK_TYPE.BEDROCK:
-		uvarray = _get_texture_slot(0,2)
-	elif current_type == BLOCK_TYPE.DIRT:
-		uvarray = _get_texture_slot(1,2)
-	else:
-		uvarray = _get_texture_slot(0,0)
+
+	uvarray = _get_texture_slot(current_type, next_type, true, should_flip )
 
 	return [varray, uvarray, carray]
 
@@ -316,8 +346,6 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	carray = _get_carray(current_type)
-
 	if should_flip:
 		varray = [
 			Vector3(xoffset+cubesize,yoff_top,zoffset), # v1 =
@@ -333,12 +361,8 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 			Vector3(xoffset+cubesize,yoff_top,zoffset), #v4,
 		]
 
-	if current_type == BLOCK_TYPE.BEDROCK:
-		uvarray = _get_texture_slot(0,2)
-	elif current_type == BLOCK_TYPE.DIRT:
-		uvarray = _get_texture_slot(1,0)
-	else:
-		uvarray = _get_texture_slot(0,0)
+
+	uvarray = _get_texture_slot(current_type, next_type, false, should_flip )
 
 	return [varray, uvarray, carray]
 
@@ -355,8 +379,6 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
-	carray = _get_carray(current_type)
-
 	if should_flip:
 		varray = [
 			Vector3(xoffset,yoff_bot,zoffset+cubesize),
@@ -372,30 +394,8 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 			Vector3(xoffset,yoff_bot,zoffset+cubesize),
 		]
 
-	if current_type == BLOCK_TYPE.BEDROCK:
-		uvarray = _get_texture_slot(0,2)
-	elif current_type == BLOCK_TYPE.DIRT:
-		uvarray = _get_texture_slot(1,0)
-	else:
-		uvarray = _get_texture_slot(0,0)
+
+	uvarray = _get_texture_slot(current_type, next_type, false, !should_flip )
 
 
 	return [varray, uvarray, carray]
-
-func _get_carray(type):
-	var COLOR_GRAY = Color( 0.75, 0.75, 0.75, 1.0 )
-	var COLOR_BEIGE = Color( 0.96, 0.96, 0.86, 1.0 )
-	var COLOR_DARKGREEN = Color( 0, 0.39, 0, 1.0 )
-	var COLOR_NONE = Color( 0, 0, 0, 0 )
-
-	var dirtArray = PoolColorArray([COLOR_BEIGE,COLOR_BEIGE,COLOR_BEIGE,COLOR_BEIGE])
-	var grayArray = PoolColorArray([COLOR_GRAY,COLOR_GRAY,COLOR_GRAY,COLOR_GRAY])
-	var noneArray = PoolColorArray([COLOR_NONE,COLOR_NONE,COLOR_NONE,COLOR_NONE])
-
-	if type == BLOCK_TYPE.DIRT:
-		carray = dirtArray;
-	elif type == BLOCK_TYPE.BEDROCK:
-		carray = grayArray;
-	else:
-		carray = noneArray;
-	return carray
