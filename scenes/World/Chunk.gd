@@ -42,6 +42,14 @@ enum BLOCK_TYPE {
 	BEDROCK
 }
 
+func _get_texture_slot(y: int, x: int):
+	return [
+		Vector2(y,x), # uv4
+		Vector2(y,x+1), # uv3
+		Vector2(y+1,x+1), # uv2
+		Vector2(y+1,x),  # uv1
+	]
+
 func logMessage(message: String):
 	print( "ID: ", chunkId, " ", message)
 
@@ -279,26 +287,19 @@ func _get_horizontal(x, z, y, current_type, next_type):
 			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v3
 			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v4
 		]
-		uvarray = [
-			Vector2(0,0), # uv1
-			Vector2(0,1), # uv2
-			Vector2(1,1), # uv3
-			Vector2(1,0), # uv4
-		]
 	else:
-		uvarray = [
-			Vector2(1,0), # uv4
-			Vector2(1,1), # uv3
-			Vector2(0,1), # uv2
-			Vector2(0,0),  # uv1
-		]
 		varray = [
 			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v1
 			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v2
 			Vector3(xoffset+0,       yoffset, zoffset+cubesize), #v3
 			Vector3(xoffset+0,       yoffset, zoffset+0), #v4
 		]
-
+	if current_type == BLOCK_TYPE.BEDROCK:
+		uvarray = _get_texture_slot(0,2)
+	elif current_type == BLOCK_TYPE.DIRT:
+		uvarray = _get_texture_slot(1,2)
+	else:
+		uvarray = _get_texture_slot(0,0)
 
 	return [varray, uvarray, carray]
 
@@ -325,19 +326,19 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 			Vector3(xoffset+cubesize,yoff_bot,zoffset), # v4 =
 		]
 	else:
-			varray  = [
-				Vector3(xoffset+cubesize,yoff_bot,zoffset), #v1
-				Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize), #v2,
-				Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize), #v3,
-				Vector3(xoffset+cubesize,yoff_top,zoffset), #v4,
-			]
+		varray  = [
+			Vector3(xoffset+cubesize,yoff_bot,zoffset), #v1
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize), #v2,
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize), #v3,
+			Vector3(xoffset+cubesize,yoff_top,zoffset), #v4,
+		]
 
-	uvarray = [
-		Vector2(0,0), # uv1
-		Vector2(0,1), # uv2
-		Vector2(1,1), # uv3
-		Vector2(1,0), # uv4
-	]
+	if current_type == BLOCK_TYPE.BEDROCK:
+		uvarray = _get_texture_slot(0,2)
+	elif current_type == BLOCK_TYPE.DIRT:
+		uvarray = _get_texture_slot(1,0)
+	else:
+		uvarray = _get_texture_slot(0,0)
 
 	return [varray, uvarray, carray]
 
@@ -356,26 +357,29 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 
 	carray = _get_carray(current_type)
 
-	if !should_flip:
+	if should_flip:
 		varray = [
-			Vector3(xoffset,yoff_top,zoffset+cubesize),
-			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
-			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
 			Vector3(xoffset,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
+			Vector3(xoffset,yoff_top,zoffset+cubesize),
 		]
 	else:
 		varray = [
-			Vector3(xoffset,yoff_bot,zoffset+cubesize),
-			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
-			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
 			Vector3(xoffset,yoff_top,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_top,zoffset+cubesize),
+			Vector3(xoffset+cubesize,yoff_bot,zoffset+cubesize),
+			Vector3(xoffset,yoff_bot,zoffset+cubesize),
 		]
-	uvarray = [
-		Vector2(0,0), # uv1
-		Vector2(0,1), # uv2
-		Vector2(1,1), # uv3
-		Vector2(1,0), # uv4
-	]
+
+	if current_type == BLOCK_TYPE.BEDROCK:
+		uvarray = _get_texture_slot(0,2)
+	elif current_type == BLOCK_TYPE.DIRT:
+		uvarray = _get_texture_slot(1,0)
+	else:
+		uvarray = _get_texture_slot(0,0)
+
+
 	return [varray, uvarray, carray]
 
 func _get_carray(type):

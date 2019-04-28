@@ -22,4 +22,4 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Find better way to retry theardpool.get_thread than timer in World.gd
  - prevent block placement at occupied position 
  - introduce loading / options screen
- - Add textures to kubelets (Add color item to quad, and set color in shader?)
+ - Fix textures for all sides of cubes, and fix direction
