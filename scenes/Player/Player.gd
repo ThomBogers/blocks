@@ -15,6 +15,7 @@ var MODE = FLYING
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
 onready var collider = get_node("PlayerCollider")
+onready var light: OmniLight = get_node("Light")
 
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
@@ -48,6 +49,12 @@ func _input(event):
 			MODE = FLYING
 			player.set_collision_layer_bit(0,0)
 			player.set_collision_mask_bit(0,0)
+
+	if event.is_action_pressed("toggle_light"):
+		if light.light_energy == 0:
+			light.light_energy = 1
+		else:
+			light.light_energy = 0
 
 	if event is InputEventMouseMotion:
 		var relative_x = event.relative.x

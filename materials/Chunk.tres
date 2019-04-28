@@ -18,8 +18,6 @@ constant = Vector3( 4, 4, 4 )
 
 [sub_resource type="VisualShader" id=5]
 code = "shader_type spatial;
-render_mode unshaded;
-
 uniform sampler2D tex_frg_4;
 
 
@@ -59,7 +57,6 @@ void light() {
 }
 "
 graph_offset = Vector2( -6.41669, 26 )
-flags/unshaded = true
 nodes/fragment/0/position = Vector2( 960, 160 )
 nodes/fragment/3/node = SubResource( 1 )
 nodes/fragment/3/position = Vector2( 40, 80 )

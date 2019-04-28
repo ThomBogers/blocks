@@ -52,6 +52,7 @@ margin_right = 40.0
 margin_bottom = 14.0
 script = ExtResource( 5 )
 
-[node name="OmniLight" type="OmniLight" parent="."]
+[node name="Light" type="OmniLight" parent="."]
+light_color = Color( 0.870588, 0.580392, 0.0313726, 1 )
 omni_range = 99.0
 
