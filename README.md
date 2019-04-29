@@ -21,6 +21,11 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
     - Find better way to retry theardpool.get_thread than timer in World.gd
  - Gameplay
     - Add projectiles
-    - prevent block placement at occupied position 
+    - prevent block placement at occupied position
+ - Camera
+    - Move camera to 'over the shoulder' when zoomed out, just a translation up and right?
+    - Third person camera should move like 'attached to a stick' on the character, camera focus point should not move when pitch changes.
+    - Add collision between camera and terrain, change camera location when colliding (low priority)
  - Misc
     - introduce loading / options screen
+    - Use different texture for top layer dirt
