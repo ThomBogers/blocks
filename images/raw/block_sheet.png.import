@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.s3tc.stex"
-path.etc2="res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.etc2.stex"
+path.s3tc="res://.import/block_sheet.png-ee1dfe5b2d52d50b2f56944015f4e87b.s3tc.stex"
+path.etc2="res://.import/block_sheet.png-ee1dfe5b2d52d50b2f56944015f4e87b.etc2.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc2" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://images/raw/edge.png"
-dest_files=[ "res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.s3tc.stex", "res://.import/edge.png-0306bbb68a2fd7d2e539be1b3e7bae03.etc2.stex" ]
+source_file="res://images/raw/block_sheet.png"
+dest_files=[ "res://.import/block_sheet.png-ee1dfe5b2d52d50b2f56944015f4e87b.s3tc.stex", "res://.import/block_sheet.png-ee1dfe5b2d52d50b2f56944015f4e87b.etc2.stex" ]
 
 [params]
 
@@ -25,7 +25,7 @@ flags/repeat=true
 flags/filter=true
 flags/mipmaps=true
 flags/anisotropic=false
-flags/srgb=1
+flags/srgb=2
 process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
