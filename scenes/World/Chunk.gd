@@ -37,10 +37,20 @@ var should_flip = false
 var worldseed
 var thread
 
+# type dict for checking noise distribution
+var type_dict = Dictionary()
+
 enum BLOCK_TYPE {
 	AIR
 	DIRT
+	MINERAL
 	BEDROCK
+}
+
+enum BLOCK_SIDE {
+	TOP
+	BOTTOM
+	SIDE
 }
 
 func logMessage(message: String):
@@ -139,10 +149,31 @@ func _build_chunk_opensimplex_3d():
 					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
 				else:
 					var type = noise.get_noise_3d(cube_x, cube_z, cube_y)
+
+					var key = floor(type * 10) / 10
+					if not type_dict.has(key):
+						type_dict[key] = 1
+					else:
+						type_dict[key] = type_dict[key] + 1
+
 					if type < 0:
-						chunk[x][z].append(BLOCK_TYPE.DIRT)
+						if type < -0.5:
+							chunk[x][z].append(BLOCK_TYPE.MINERAL)
+						else:
+							chunk[x][z].append(BLOCK_TYPE.DIRT)
+
 					elif type >= 0:
 						chunk[x][z].append(BLOCK_TYPE.AIR)
+
+
+func _print_type_dict():
+	var opts = [-1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+	for key in opts:
+		print()
+		if type_dict.has(key):
+			print("ID: ", chunkId, ' KEY: ', key, " VAL: ", type_dict[key])
+		else:
+			print("ID: ", chunkId, ' KEY: ', key,  " VAL: ", 0)
 
 func _build_test_chunk():
 
@@ -241,9 +272,9 @@ func _render_mesh_thread(params):
 	return;
 
 
-func _get_texture_slot(current_type, next_type, top, flip):
-	var y
-	var x
+func _get_texture_slot(current_type, next_type, side, flip):
+	var column
+	var row
 	var type
 
 	if !_block_type_is_transparent(current_type):
@@ -254,31 +285,34 @@ func _get_texture_slot(current_type, next_type, top, flip):
 		print("This should not happen right?")
 
 	if type == BLOCK_TYPE.BEDROCK:
-		y = 0
-		x = 2
-	elif type == BLOCK_TYPE.DIRT && top:
-		y = 1
-		x = 2
+		column = 0
+		row = 2
+	elif type == BLOCK_TYPE.DIRT && side == BLOCK_SIDE.TOP:
+		column = 1
+		row = 2
 	elif type == BLOCK_TYPE.DIRT:
-		y = 1
-		x = 0
+		column = 1
+		row = 0
+	elif type == BLOCK_TYPE.MINERAL:
+		column = 0
+		row = 0
 	else:
-		y = 0
-		x = 0
+		column = 0
+		row = 0
 
 	if flip:
 		return [
-			Vector2(y,x), # uv4
-			Vector2(y+1,x),  # uv1
-			Vector2(y+1,x+1), # uv2
-			Vector2(y,x+1), # uv3
+			Vector2(column,row), # uv4
+			Vector2(column+1,row),  # uv1
+			Vector2(column+1,row+1), # uv2
+			Vector2(column,row+1), # uv3
 		]
 	else:
 		return [
-			Vector2(y+1,x+1), # uv2
-			Vector2(y,x+1), # uv3
-			Vector2(y,x), # uv4
-			Vector2(y+1,x),  # uv1
+			Vector2(column+1,row+1), # uv2
+			Vector2(column,row+1), # uv3
+			Vector2(column,row), # uv4
+			Vector2(column+1,row),  # uv1
 		]
 
 func _block_type_is_transparent(type):
@@ -320,6 +354,7 @@ func _get_horizontal(x, z, y, current_type, next_type):
 			Vector3(xoffset+cubesize,yoffset, zoffset+cubesize), #v3
 			Vector3(xoffset+cubesize,yoffset, zoffset+0), #v4
 		]
+		uvarray = _get_texture_slot(current_type, next_type, BLOCK_SIDE.BOTTOM, should_flip )
 
 	else:
 		varray = [
@@ -329,7 +364,7 @@ func _get_horizontal(x, z, y, current_type, next_type):
 			Vector3(xoffset+0,       yoffset, zoffset+0), #v4
 		]
 
-	uvarray = _get_texture_slot(current_type, next_type, true, should_flip )
+		uvarray = _get_texture_slot(current_type, next_type, BLOCK_SIDE.TOP, should_flip )
 
 	return [varray, uvarray, carray]
 
@@ -362,7 +397,7 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 		]
 
 
-	uvarray = _get_texture_slot(current_type, next_type, false, should_flip )
+	uvarray = _get_texture_slot(current_type, next_type, BLOCK_SIDE.SIDE, should_flip )
 
 	return [varray, uvarray, carray]
 
@@ -395,7 +430,7 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 		]
 
 
-	uvarray = _get_texture_slot(current_type, next_type, false, !should_flip )
+	uvarray = _get_texture_slot(current_type, next_type, BLOCK_SIDE.SIDE, !should_flip )
 
 
 	return [varray, uvarray, carray]
