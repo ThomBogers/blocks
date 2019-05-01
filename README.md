@@ -29,3 +29,9 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Misc
     - introduce loading / options screen
     - Use different texture for top layer dirt
+
+## Noise distribution 
+
+Distribution of values from `noise.get_noise_3d`, based on `774144` calls:
+
+![Noise distribution](docs/noise_distribution.png)
