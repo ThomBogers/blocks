@@ -157,7 +157,7 @@ func _build_chunk_opensimplex_3d():
 						type_dict[key] = type_dict[key] + 1
 
 					if type < 0:
-						if type < -0.5:
+						if type < -0.4:
 							chunk[x][z].append(BLOCK_TYPE.MINERAL)
 						else:
 							chunk[x][z].append(BLOCK_TYPE.DIRT)
@@ -294,8 +294,8 @@ func _get_texture_slot(current_type, next_type, side, flip):
 		column = 1
 		row = 0
 	elif type == BLOCK_TYPE.MINERAL:
-		column = 0
-		row = 0
+		column = 1
+		row = 3
 	else:
 		column = 0
 		row = 0
