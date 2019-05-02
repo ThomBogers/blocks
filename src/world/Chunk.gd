@@ -55,7 +55,7 @@ enum BLOCK_SIDE {
 }
 
 func logMessage(message: String):
-	print( "ID: ", chunkId, " ", message)
+	print( "Chunk: id ", chunkId, " ", message)
 
 func init(id: int, offset: Vector3, _worldseed: int):
 	cubesize = CONSTANTS.CUBESIZE
@@ -72,11 +72,11 @@ func init(id: int, offset: Vector3, _worldseed: int):
 
 func hit(collision, type, origin):
 
-	logMessage("Collistion: " + str(collision))
+	logMessage("collision, info " + str(collision))
 
 	# Create position relative to chunk position
 	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
-	logMessage("Relative Position: " + str(relPosition))
+	logMessage("collision, relative position " + str(relPosition))
 
 	var hitDirection
 	if type != EQUIPMENT.TYPES.ARM:
@@ -88,16 +88,16 @@ func hit(collision, type, origin):
 	var z_pos = floor((relPosition.z+hitDirection.z)/cubesize)
 	var y_pos = floor((relPosition.y+hitDirection.y)/cubesize) + 1
 
-	logMessage("X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos)  + "\n" )
+	logMessage("collision, X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos) )
 
 	if x_pos > chunk.size()-1:
-		print("Out of x_pos range")
+		logMessage("collision, out of x_pos range")
 		return
 	if z_pos > chunk[x_pos].size()-1:
-		print("Out of z_pos range")
+		logMessage("collision, out of z_pos range")
 		return
 	if y_pos > chunk[x_pos][z_pos].size()-1:
-		print("Out of y_pos range")
+		logMessage("collision, out of y_pos range")
 		return
 
 	# TODO: Check distance from origin to center position of chunk[x_pos][z_pos][y_pos]
@@ -111,7 +111,7 @@ func hit(collision, type, origin):
 	elif type == EQUIPMENT.TYPES.DIRT:
 		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.DIRT
 	else:
-		logMessage("UNKOWN HIT TYPE: "+ str(type))
+		logMessage("collision, UNKOWN HIT TYPE: "+ str(type))
 
 	clean = false
 
@@ -171,7 +171,6 @@ func _build_chunk_opensimplex_3d():
 func _print_type_dict():
 	var opts = [-1, -0.9, -0.8, -0.7, -0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 	for key in opts:
-		print()
 		if type_dict.has(key):
 			print("ID: ", chunkId, ' KEY: ', key, " VAL: ", type_dict[key])
 		else:
@@ -266,8 +265,6 @@ func _get_texture_slot(current_type, next_type, side, flip):
 		type = current_type
 	elif !_block_type_is_transparent(next_type):
 		type = next_type
-	else:
-		print("This should not happen right?")
 
 	if type == BLOCK_TYPE.BEDROCK:
 		column = 0

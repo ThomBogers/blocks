@@ -15,9 +15,13 @@ var world_ready = false
 var chunk_dict = Dictionary()
 
 
+func logMessage(message: String):
+	print( "World: ", message)
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
+	logMessage("start")
 	_timer = Timer.new()
 	add_child(_timer)
 
@@ -83,7 +87,7 @@ func _on_Timer_timeout():
 
 	if clean_run:
 		if !world_ready:
-			print("World ready")
+			logMessage("world ready")
 			world_ready = true
 			player.start()
 

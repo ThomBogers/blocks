@@ -30,19 +30,26 @@ var cameraOffset = Vector3(0,0,0);
 
 var started = false
 
+
+func logMessage(message: String):
+	print( "Player: ", message)
+
 func start():
 	if started:
 		return
 
+	logMessage("started")
 	started = true
 	_setWalkMode()
 
 func _setWalkMode():
+	logMessage("switching to walk mode")
 	MODE = WALKING
 	player.set_collision_layer_bit(0,1)
 	player.set_collision_mask_bit(0,1)
 
 func _setFlyMode():
+	logMessage("switching to fly mode")
 	movement_vector.y = 0
 	MODE = FLYING
 	player.set_collision_layer_bit(0,0)
