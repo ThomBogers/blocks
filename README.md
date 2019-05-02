@@ -29,7 +29,7 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
  - Misc
     - introduce loading / options screen
     - Use different texture for top layer dirt
-    - Split scenes and code into directories
+    - Cleanup colors at edge of texture's
 
 ## Noise distribution 
 

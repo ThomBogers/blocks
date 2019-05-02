@@ -103,3 +103,21 @@ func _build_chunk_test2():
 					current = BLOCK_TYPE.AIR
 
 				chunk[x][z].append(current)
+
+
+func _build_test_chunk():
+
+	for x in range(chunksize.x):
+		chunk.append([])
+		for z in range(chunksize.z):
+			chunk[x].append([])
+
+			for y in range(chunksize.y):
+				if x == 10:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				elif z == 10:
+					chunk[x][z].append(BLOCK_TYPE.DIRT)
+				# elif z == 10:
+				# 	chunk[x][z].append(BLOCK_TYPE.DIRT)
+				else:
+					chunk[x][z].append(BLOCK_TYPE.AIR)

@@ -1,6 +1,6 @@
 extends Spatial
 
-var CONSTANTS = load("res://scenes/Util/constants.gd")
+var CONSTANTS = load("res://src/util/constants.gd")
 
 const GRAVITY     = -9.81
 const SPEED_JUMP = 2.45
@@ -23,7 +23,7 @@ var yaw   = 45
 var pitch = 45
 const view_sensitivity = 1
 
-var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
+var EQUIPMENT = load("res://src/player/Equipment.gd")
 
 var initialCameraPosition;
 var cameraOffset = Vector3(0,0,0);

@@ -9,8 +9,8 @@ export(Material) var material
 
 var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 
-var EQUIPMENT = load("res://scenes/Player/Equipment.gd")
-var CONSTANTS = load("res://scenes/Util/constants.gd")
+var EQUIPMENT = load("res://src/player/Equipment.gd")
+var CONSTANTS = load("res://src/util/constants.gd")
 
 var chunkoffset = Vector3(0,0,0)
 var chunkId = 0
@@ -21,7 +21,7 @@ var chunk = []
 var chunkInitialised = false
 var clean = false
 
-var COLOR_NONE = Color(0,0,0,0)
+const COLOR_NONE = Color(0,0,0,0)
 var carray = PoolColorArray([COLOR_NONE,COLOR_NONE,COLOR_NONE,COLOR_NONE])
 var uvarray = []
 var varray  = []
@@ -175,28 +175,11 @@ func _print_type_dict():
 		else:
 			print("ID: ", chunkId, ' KEY: ', key,  " VAL: ", 0)
 
-func _build_test_chunk():
-
-	for x in range(chunksize.x):
-		chunk.append([])
-		for z in range(chunksize.z):
-			chunk[x].append([])
-
-			for y in range(chunksize.y):
-				if x == 10:
-					chunk[x][z].append(BLOCK_TYPE.DIRT)
-				elif z == 10:
-					chunk[x][z].append(BLOCK_TYPE.DIRT)
-				# elif z == 10:
-				# 	chunk[x][z].append(BLOCK_TYPE.DIRT)
-				else:
-					chunk[x][z].append(BLOCK_TYPE.AIR)
 
 func _render_mesh_thread(params):
 
 	if(!chunkInitialised):
 		_build_chunk_opensimplex_3d()
-		# _build_test_chunk()
 		chunkInitialised = true
 
 	var surfTool = SurfaceTool.new()

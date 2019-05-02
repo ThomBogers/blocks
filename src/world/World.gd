@@ -6,8 +6,8 @@ extends Spatial
 onready var player = get_node("./Player")
 onready var threadpool = get_node("../Threadpool")
 
-var CONSTANTS = load("res://scenes/Util/constants.gd")
-var Chunk = preload("res://scenes/World/Chunk.tscn")
+var CONSTANTS = load("res://src/util/constants.gd")
+var Chunk = preload("res://scenes/Chunk.tscn")
 
 var _timer = null
 
