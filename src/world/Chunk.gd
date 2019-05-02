@@ -308,10 +308,7 @@ func _flip_or_return(current_type, next_type):
 	should_ret  = false
 	should_flip = false
 
-	if current_type == next_type:
-		should_ret = true
-
-	elif _block_type_is_transparent(current_type) and _block_type_is_transparent(next_type):
+	if _block_type_is_transparent(current_type) == _block_type_is_transparent(next_type):
 		should_ret = true
 
 	elif _block_type_is_transparent(current_type) and not _block_type_is_transparent(next_type):
