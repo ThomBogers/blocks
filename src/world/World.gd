@@ -16,7 +16,8 @@ var chunk_dict = Dictionary()
 
 
 func logMessage(message: String):
-	print( "World: ", message)
+	var name = self.get_script().get_path().get_file().replace('.gd', '')
+	print( name, ": ", message)
 
 func _ready():
 	# Called every time the node is added to the scene.

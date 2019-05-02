@@ -30,9 +30,9 @@ var cameraOffset = Vector3(0,0,0);
 
 var started = false
 
-
 func logMessage(message: String):
-	print( "Player: ", message)
+	var name = self.get_script().get_path().get_file().replace('.gd', '')
+	print( name, ": ", message)
 
 func start():
 	if started:

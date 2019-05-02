@@ -55,7 +55,8 @@ enum BLOCK_SIDE {
 }
 
 func logMessage(message: String):
-	print( "Chunk: id ", chunkId, " ", message)
+	var name = self.get_script().get_path().get_file().replace('.gd', '')
+	print( name, ": ", message)
 
 func init(id: int, offset: Vector3, _worldseed: int):
 	cubesize = CONSTANTS.CUBESIZE

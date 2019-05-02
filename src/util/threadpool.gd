@@ -4,7 +4,8 @@ var threads = Dictionary()
 
 
 func logMessage(message: String):
-	print( "Threadpool: ", message)
+	var name = self.get_script().get_path().get_file().replace('.gd', '')
+	print( name, ": ", message)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
