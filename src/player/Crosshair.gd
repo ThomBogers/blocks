@@ -16,8 +16,3 @@ func position_crosshair():
 	crosshair.rect_position.y = (viewport_size.y / 2) - (crosshair_size.y /2 * crosshair.rect_scale.y)
 
 	pass
-
-#func _process(delta):
-#	# Called every frame. Delta is time since last frame.
-#	# Update game logic here.
-#	pass
