@@ -30,6 +30,7 @@ Screenshots of versions by githash may be found [here](docs/versions.md)
     - introduce loading / options screen
     - Use different texture for top layer dirt
     - Cleanup colors at edge of texture's
+    - Fix editing blocks on chunk edge
 
 ## Noise distribution 
 

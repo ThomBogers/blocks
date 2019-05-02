@@ -36,6 +36,7 @@ var should_flip = false
 # Seeds for terain gen
 var worldseed
 var thread
+var initialized
 
 # type dict for checking noise distribution
 var type_dict = Dictionary()
@@ -125,6 +126,7 @@ func renderEnd():
 	logMessage("renderDone wait_to_finish ")
 	thread.wait_to_finish();
 	thread = null
+	initialized = true
 	logMessage("renderDone end ")
 
 

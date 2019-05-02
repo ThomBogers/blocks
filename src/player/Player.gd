@@ -28,6 +28,26 @@ var EQUIPMENT = load("res://src/player/Equipment.gd")
 var initialCameraPosition;
 var cameraOffset = Vector3(0,0,0);
 
+var started = false
+
+func start():
+	if started:
+		return
+
+	started = true
+	_setWalkMode()
+
+func _setWalkMode():
+	MODE = WALKING
+	player.set_collision_layer_bit(0,1)
+	player.set_collision_mask_bit(0,1)
+
+func _setFlyMode():
+	movement_vector.y = 0
+	MODE = FLYING
+	player.set_collision_layer_bit(0,0)
+	player.set_collision_mask_bit(0,0)
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
@@ -42,23 +62,10 @@ func _ready():
 
 func _input(event):
 
-	if event.is_action_pressed("game_godmode"):
-		if MODE == FLYING:
-			MODE = WALKING
-			player.set_collision_layer_bit(0,1)
-			player.set_collision_mask_bit(0,1)
-		else:
-			movement_vector.y = 0
-			MODE = FLYING
-			player.set_collision_layer_bit(0,0)
-			player.set_collision_mask_bit(0,0)
-
-	if event.is_action_pressed("toggle_light"):
-		if light.light_energy == 0:
-			light.light_energy = 1
-		else:
-			light.light_energy = 0
 	
+	if event.is_action_pressed("game_quit"):
+		get_tree().quit()
+
 	if event.is_action_pressed("zoom_in"):
 		cameraOffset.z = cameraOffset.z - 10;
 		if cameraOffset.z < 0:
@@ -82,6 +89,23 @@ func _input(event):
 		camera.set_rotation(Vector3(deg2rad(pitch), 0,0 ))
 		player.set_rotation(Vector3(0,deg2rad(yaw),0 ))
 
+	if event.is_action_pressed("game_godmode"):
+		if MODE == FLYING:
+			_setWalkMode()
+		else:
+			_setFlyMode()
+
+	if !started:
+		return
+	
+	# Ingame actions
+
+	if event.is_action_pressed("toggle_light"):
+		if light.light_energy == 0:
+			light.light_energy = 1
+		else:
+			light.light_energy = 0
+
 	if event.is_action_pressed("game_right"):
 		movement_vector.x = +1
 	elif event.is_action_released("game_right"):
@@ -104,7 +128,6 @@ func _input(event):
 
 	if MODE == WALKING:
 		if event.is_action_pressed("game_up") && jumps < MAX_JUMPS:
-			print("JUMP TIME")
 			jumps = jumps + 1
 			movement_vector.y = SPEED_JUMP
 	else:
@@ -124,10 +147,6 @@ func _input(event):
 		camera.cast_ray(EQUIPMENT.TYPES.ARM)
 	if event.is_action_pressed("game_click_right"):
 		camera.cast_ray(EQUIPMENT.TYPES.DIRT)
-
-	if event.is_action_pressed("game_quit"):
-		get_tree().quit()
-
 
 
 func _physics_process(delta):

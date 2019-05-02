@@ -10,6 +10,7 @@ var CONSTANTS = load("res://src/util/constants.gd")
 var Chunk = preload("res://scenes/Chunk.tscn")
 
 var _timer = null
+var world_ready = false
 
 var chunk_dict = Dictionary()
 
@@ -64,11 +65,26 @@ func _get_player_chunk_loc():
 	return current_chunk
 
 func _on_Timer_timeout():
+
+	var clean_run = true
+
 	for key in chunk_dict.keys():
 		var chunk = chunk_dict.get(key)
+
+		if not chunk.initialized:
+			clean_run = false
+
 		if not chunk.clean:
+			clean_run = false
 			var thread = threadpool.get_thread()
 			if(thread == null):
 				return;
 			chunk.render(thread)
+
+	if clean_run:
+		if !world_ready:
+			print("World ready")
+			world_ready = true
+			player.start()
+
 
