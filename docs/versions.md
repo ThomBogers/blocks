@@ -33,5 +33,5 @@
 ## 07c9217dbe666065774ac0443706a6110720e5bf
 ![version 07c9217dbe666065774ac0443706a6110720e5bf](07c9217dbe666065774ac0443706a6110720e5bf.png)
 ## d409f67a07acd6e94a067b72773883c9e75bbeaa (video)
-[![d409f67a07acd6e94a067b72773883c9e75bbeaa](https://img.youtube.com/vi/lhshoiR5qxU/hqdefault.jpg)](https://youtu.be/lhshoiR5qxU)
+[![d409f67a07acd6e94a067b72773883c9e75bbeaa](d409f67a07acd6e94a067b72773883c9e75bbeaa.png)](https://youtu.be/lhshoiR5qxU)
 
