@@ -1,10 +1,15 @@
 extends Control
 
+var _timer = null
+var _game = null
+var _root = null
+
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
 
 func _ready():
+
 	_timer = Timer.new()
 	add_child(_timer)
 	_timer.connect("timeout", self, "_on_Timer_timeout")
@@ -12,13 +17,6 @@ func _ready():
 	_timer.set_one_shot(false) # Make sure it loops
 	_timer.start()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
-var _timer = null
-var _game = null
-var _root = null
 
 func _on_StartButton_pressed():
 	logMessage("StartButton pressed")

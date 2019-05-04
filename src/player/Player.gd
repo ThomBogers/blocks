@@ -38,6 +38,8 @@ func start():
 	if started:
 		return
 
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
 	logMessage("started")
 	started = true
 	_setWalkMode()
