@@ -32,6 +32,7 @@ mesh = SubResource( 2 )
 material/0 = SubResource( 3 )
 
 [node name="Crosshair" type="TextureRect" parent="."]
+visible = false
 margin_right = 217.0
 margin_bottom = 217.0
 rect_scale = Vector2( 0.25, 0.25 )

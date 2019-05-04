@@ -70,6 +70,16 @@ func _get_player_chunk_loc():
 
 	return current_chunk
 
+func _get_chunks_initialized():
+	var initialized = 0
+	for key in chunk_dict.keys():
+		var chunk = chunk_dict.get(key)
+		if chunk.initialized:
+			initialized = initialized + 1
+	
+	logMessage("chunk initialization status " + str(initialized) + " " + str(chunk_dict.size()) )
+	return [initialized, chunk_dict.size()]
+
 func _on_Timer_timeout():
 
 	var clean_run = true

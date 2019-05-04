@@ -10,12 +10,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 margin_right = 1279.0
 margin_bottom = 721.0
 texture = ExtResource( 2 )
 
-[node name="StartButton" type="TextureButton" parent="TextureRect"]
+[node name="StartButton" type="TextureButton" parent="Background"]
 margin_left = 977.391
 margin_top = 553.749
 margin_right = 1489.39
@@ -24,4 +24,11 @@ rect_scale = Vector2( 0.5, 0.5 )
 texture_normal = ExtResource( 3 )
 texture_pressed = ExtResource( 4 )
 
-[connection signal="pressed" from="TextureRect/StartButton" to="." method="_on_StartButton_pressed"]
+[node name="LoadingBar" type="ProgressBar" parent="Background"]
+visible = false
+margin_left = 450.616
+margin_top = 347.829
+margin_right = 824.616
+margin_bottom = 375.829
+
+[connection signal="pressed" from="Background/StartButton" to="." method="_on_StartButton_pressed"]
