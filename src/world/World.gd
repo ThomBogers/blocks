@@ -48,14 +48,15 @@ func _draw_surround():
 
 	for x in range(-CONSTANTS.WORLDRADIUS, CONSTANTS.WORLDRADIUS):
 		for z in range(-CONSTANTS.WORLDRADIUS, CONSTANTS.WORLDRADIUS):
-			var key = str(current_chunk.x+x)+":"+str(current_chunk.z+z)
-			if not chunk_dict.has(key):
-				var offset = Vector3(current_chunk.x+x, 0, current_chunk.z+z)
-				var chunk = Chunk.instance()
-				chunk.init(id, offset, _worldseed)
-				id+=1
-				add_child(chunk)
-				chunk_dict[key] = chunk
+			for y in range(0,1):
+				var key = str(current_chunk.x+x)+":"+str(current_chunk.y+y)+":"+str(current_chunk.z+z)
+				if not chunk_dict.has(key):
+					var offset = Vector3(current_chunk.x+x, current_chunk.y+y, current_chunk.z+z)
+					var chunk = Chunk.instance()
+					chunk.init(id, offset, _worldseed)
+					id+=1
+					add_child(chunk)
+					chunk_dict[key] = chunk
 
 
 func _get_player_chunk_loc():

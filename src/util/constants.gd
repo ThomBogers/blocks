@@ -1,3 +1,3 @@
 const CUBESIZE    = 16
-const CHUNKSIZE   = Vector3(32, 64, 32)
-const WORLDRADIUS = 1
+const CHUNKSIZE   = Vector3(16, 32, 16)
+const WORLDRADIUS = 3

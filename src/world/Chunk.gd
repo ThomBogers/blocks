@@ -12,6 +12,8 @@ var noise: OpenSimplexNoise = OpenSimplexNoise.new()
 var EQUIPMENT = load("res://src/player/Equipment.gd")
 var CONSTANTS = load("res://src/util/constants.gd")
 
+onready var threadpool = get_node("../../Threadpool")
+
 var chunkoffset = Vector3(0,0,0)
 var chunkId = 0
 
@@ -115,10 +117,12 @@ func hit(collision, type, origin):
 		logMessage("collision, UNKOWN HIT TYPE: "+ str(type))
 
 	clean = false
+	var _thread = threadpool.get_thread()
+	render(_thread)
 
 
 func render(_thread):
-	if not _thread.is_active():
+	if thread == null && not _thread.is_active():
 		thread = _thread
 		clean = true
 		thread.start(self, "_render_mesh_thread", {}, 2)
