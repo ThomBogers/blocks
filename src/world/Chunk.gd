@@ -144,9 +144,9 @@ func _build_chunk_opensimplex_3d():
 			chunk[x].append([])
 
 			for y in range(chunksize.y):
-				var cube_x = (chunkoffset.x) + x
-				var cube_z = (chunkoffset.z) + z
-				var cube_y = (chunkoffset.y) + y
+				var cube_x = (chunkoffset.x/cubesize) + x
+				var cube_z = (chunkoffset.z/cubesize) + z
+				var cube_y = (chunkoffset.y/cubesize) + y
 
 				if cube_y == 0:
 					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
