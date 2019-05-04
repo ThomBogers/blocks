@@ -69,7 +69,9 @@ func _ready():
 
 func _input(event):
 
-	
+	if !started:
+		return
+
 	if event.is_action_pressed("game_quit"):
 		get_tree().quit()
 
@@ -77,7 +79,7 @@ func _input(event):
 		cameraOffset.z = cameraOffset.z - 10;
 		if cameraOffset.z < 0:
 			cameraOffset.z = 0
-		
+
 		camera.translation = initialCameraPosition + cameraOffset
 
 	if event.is_action_pressed("zoom_out"):
@@ -92,7 +94,7 @@ func _input(event):
 
 		yaw   = fmod(yaw - relative_x * view_sensitivity, 360)
 		pitch = max(min(pitch - relative_y * view_sensitivity, 90), -90)
-		
+
 		camera.set_rotation(Vector3(deg2rad(pitch), 0,0 ))
 		player.set_rotation(Vector3(0,deg2rad(yaw),0 ))
 
@@ -102,10 +104,6 @@ func _input(event):
 		else:
 			_setFlyMode()
 
-	if !started:
-		return
-	
-	# Ingame actions
 
 	if event.is_action_pressed("toggle_light"):
 		if light.light_energy == 0:

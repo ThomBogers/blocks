@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://src/UI/Menu.gd" type="Script" id=1]
+[ext_resource path="res://images/raw/UI/background.png" type="Texture" id=2]
+[ext_resource path="res://images/raw/UI/start_button.png" type="Texture" id=3]
+[ext_resource path="res://images/raw/UI/start_button_pressed.png" type="Texture" id=4]
+
+[node name="Menu" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_right = 1279.0
+margin_bottom = 721.0
+texture = ExtResource( 2 )
+
+[node name="StartButton" type="TextureButton" parent="TextureRect"]
+margin_left = 977.391
+margin_top = 553.749
+margin_right = 1489.39
+margin_bottom = 809.749
+rect_scale = Vector2( 0.5, 0.5 )
+texture_normal = ExtResource( 3 )
+texture_pressed = ExtResource( 4 )
+
+[connection signal="pressed" from="TextureRect/StartButton" to="." method="_on_StartButton_pressed"]

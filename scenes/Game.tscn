@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/World.tscn" type="PackedScene" id=1]
-[ext_resource path="res://src/world/World.gd" type="Script" id=2]
-[ext_resource path="res://src/util/threadpool.gd" type="Script" id=3]
+[ext_resource path="res://src/util/threadpool.gd" type="Script" id=2]
 
 [sub_resource type="ProceduralSky" id=1]
 sky_top_color = Color( 0.0470588, 0.454902, 0.976471, 1 )
@@ -26,7 +25,7 @@ dof_blur_far_transition = 100.0
 dof_blur_far_quality = 2
 glow_enabled = true
 
-[node name="Main" type="Spatial"]
+[node name="Game" type="Spatial"]
 
 [node name="Viewport" type="Viewport" parent="."]
 
@@ -34,7 +33,6 @@ glow_enabled = true
 environment = SubResource( 2 )
 
 [node name="World" parent="." instance=ExtResource( 1 )]
-script = ExtResource( 2 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.707107, -0.707107, -3.09086e-008, 0, -4.37114e-008, 1, -0.707107, -0.707107, -3.09086e-008, 0, 100, 0 )
@@ -43,5 +41,5 @@ light_energy = 0.25
 directional_shadow_max_distance = 100.0
 
 [node name="Threadpool" type="Node" parent="."]
-script = ExtResource( 3 )
+script = ExtResource( 2 )
 
