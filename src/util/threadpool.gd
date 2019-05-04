@@ -9,7 +9,7 @@ func logMessage(message: String):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	for i in range(0,OS.get_processor_count()-1):
+	for i in range(0,OS.get_processor_count()/2):
 		threads[i] = Thread.new()
 
 func get_thread():
