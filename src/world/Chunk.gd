@@ -3,7 +3,6 @@ extends StaticBody
 var this = null
 
 var meshInstance = null
-var collInstance = null
 
 export(Material) var material
 
@@ -65,12 +64,11 @@ func init(id: int, offset: Vector3, _worldseed: int):
 	chunksize = CONSTANTS.CHUNKSIZE
 
 	chunkId = id
-	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, 0, offset.z*chunksize.z*cubesize)
+	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, offset.y*chunksize.y*cubesize, offset.z*chunksize.z*cubesize)
 	this = get_node(".")
 	this.translate(chunkoffset)
 
-	meshInstance = get_node("CollisionShape/MeshInstance")
-	collInstance = get_node("CollisionShape")
+	meshInstance = get_node("MeshInstance")
 	worldseed = _worldseed
 
 func hit(collision, type, origin):
@@ -93,13 +91,13 @@ func hit(collision, type, origin):
 
 	logMessage("collision, X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos) )
 
-	if x_pos > chunk.size()-1:
+	if x_pos > chunk.size()-1 || x_pos < 0:
 		logMessage("collision, out of x_pos range")
 		return
-	if z_pos > chunk[x_pos].size()-1:
+	if z_pos > chunk[x_pos].size()-1 || z_pos < 0:
 		logMessage("collision, out of z_pos range")
 		return
-	if y_pos > chunk[x_pos][z_pos].size()-1:
+	if y_pos > chunk[x_pos][z_pos].size()-1 || y_pos < 0:
 		logMessage("collision, out of y_pos range")
 		return
 
@@ -248,7 +246,6 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
-	# meshInstance.set_material_override(material)
 	meshInstance.set_mesh(mesh)
 
 	# Remove old collision mesh if present

@@ -44,7 +44,7 @@ func start():
 	
 	logMessage("started")
 	started = true
-	_setWalkMode()
+	# _setWalkMode()
 
 func _setWalkMode():
 	logMessage("switching to walk mode")
