@@ -71,24 +71,7 @@ func init(id: int, offset: Vector3, _worldseed: int):
 	meshInstance = get_node("MeshInstance")
 	worldseed = _worldseed
 
-func hit(collision, type, origin):
-
-	logMessage("collision, info " + str(collision))
-
-	# Create position relative to chunk position
-	var relPosition = Vector3(collision.position.x-chunkoffset.x, collision.position.y-chunkoffset.y, collision.position.z-chunkoffset.z)
-	logMessage("collision, relative position " + str(relPosition))
-
-	var hitDirection
-	if type != EQUIPMENT.TYPES.ARM:
-		hitDirection = Vector3(collision.normal.x*(cubesize/2.0), collision.normal.y*(cubesize/2.0), collision.normal.z*(cubesize/2.0))
-	else:
-		hitDirection = Vector3(-collision.normal.x*(cubesize/2.0), -collision.normal.y*(cubesize/2.0), -collision.normal.z*(cubesize/2.0))
-
-	var x_pos = floor((relPosition.x+hitDirection.x)/cubesize)
-	var z_pos = floor((relPosition.z+hitDirection.z)/cubesize)
-	var y_pos = floor((relPosition.y+hitDirection.y)/cubesize) + 1
-
+func hit(x_pos, z_pos, y_pos, type, origin):
 	logMessage("collision, X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos) )
 
 	if x_pos > chunk.size()-1 || x_pos < 0:

@@ -5,7 +5,7 @@ var CONSTANTS = load("res://src/util/constants.gd")
 const GRAVITY     = -9.81
 const SPEED_JUMP = 2.45
 const SPEED_WALK = 60
-const SPEED_AIR  = 60
+const SPEED_AIR  = 180
 
 const FLYING  = 0
 const WALKING = 1

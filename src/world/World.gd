@@ -7,6 +7,7 @@ onready var player = get_node("./Player")
 onready var threadpool = get_node("../Threadpool")
 
 var CONSTANTS = load("res://src/util/constants.gd")
+var EQUIPMENT = load("res://src/player/Equipment.gd")
 var Chunk = preload("res://scenes/Chunk.tscn")
 
 var _timer = null
@@ -27,7 +28,7 @@ func _ready():
 	add_child(_timer)
 
 	_timer.connect("timeout", self, "_on_Timer_timeout")
-	_timer.set_wait_time(.2)
+	_timer.set_wait_time(.5)
 	_timer.set_one_shot(false) # Make sure it loops
 	_timer.start()
 
@@ -44,18 +45,41 @@ func _ready():
 func hit(collision, type, origin):
 
 	logMessage("collision, info " + str(collision))
-	for key in chunk_dict.keys():
+
+	var hitDirection
+	if type != EQUIPMENT.TYPES.ARM:
+		hitDirection = Vector3(collision.normal.x*(CONSTANTS.CUBESIZE/2.0), collision.normal.y*(CONSTANTS.CUBESIZE/2.0), collision.normal.z*(CONSTANTS.CUBESIZE/2.0))
+	else:
+		hitDirection = Vector3(-collision.normal.x*(CONSTANTS.CUBESIZE/2.0), -collision.normal.y*(CONSTANTS.CUBESIZE/2.0), -collision.normal.z*(CONSTANTS.CUBESIZE/2.0))
+
+	var x_pos = floor((collision.position.x+hitDirection.x)/CONSTANTS.CUBESIZE)
+	var z_pos = floor((collision.position.z+hitDirection.z)/CONSTANTS.CUBESIZE)
+	var y_pos = floor((collision.position.y+hitDirection.y)/CONSTANTS.CUBESIZE) + 1
+
+	var x_chunk = floor(x_pos/CONSTANTS.CHUNKSIZE.x)
+	var z_chunk = floor(z_pos/CONSTANTS.CHUNKSIZE.z)
+	var y_chunk = floor(y_pos/CONSTANTS.CHUNKSIZE.y)
+
+	var chunk_x_pos = x_pos - x_chunk * CONSTANTS.CHUNKSIZE.x
+	var chunk_z_pos = z_pos - z_chunk * CONSTANTS.CHUNKSIZE.z
+	var chunk_y_pos = y_pos - y_chunk * CONSTANTS.CHUNKSIZE.y
+
+	var key = str(x_chunk)+":"+str(y_chunk)+":"+str(z_chunk)
+
+	if chunk_dict.has(key):
 		var chunk = chunk_dict.get(key)
-		chunk.hit(collision, type, origin)
+		chunk.hit(chunk_x_pos, chunk_z_pos, chunk_y_pos, type, origin)
+	else:
+		logMessage('hit, chunk not in dict')
 
 func _draw_surround():
 	var _worldseed = randi()
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
 
-	for x in range(0, CONSTANTS.WORLDSIZE.x):
-		for z in range(0, CONSTANTS.WORLDSIZE.z):
-			for y in range(0,CONSTANTS.WORLDSIZE.y):
+	for x in range(-CONSTANTS.WORLDSIZE.x, CONSTANTS.WORLDSIZE.x):
+		for z in range(-CONSTANTS.WORLDSIZE.z, CONSTANTS.WORLDSIZE.z):
+			for y in range(-CONSTANTS.WORLDSIZE.y,CONSTANTS.WORLDSIZE.y):
 				var key = str(current_chunk.x+x)+":"+str(current_chunk.y+y)+":"+str(current_chunk.z+z)
 				if not chunk_dict.has(key):
 					var offset = Vector3(current_chunk.x+x, current_chunk.y+y, current_chunk.z+z)
