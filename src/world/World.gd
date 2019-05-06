@@ -77,9 +77,9 @@ func _draw_surround():
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
 
-	for x in range(-CONSTANTS.WORLDSIZE.x, CONSTANTS.WORLDSIZE.x):
-		for z in range(-CONSTANTS.WORLDSIZE.z, CONSTANTS.WORLDSIZE.z):
-			for y in range(-CONSTANTS.WORLDSIZE.y,CONSTANTS.WORLDSIZE.y):
+	for x in range(floor(-CONSTANTS.WORLDSIZE.x/2), ceil(CONSTANTS.WORLDSIZE.x/2)):
+		for z in range(floor(-CONSTANTS.WORLDSIZE.z/2), ceil(CONSTANTS.WORLDSIZE.z/2)):
+			for y in range(floor(-CONSTANTS.WORLDSIZE.y/2),ceil(CONSTANTS.WORLDSIZE.y/2)):
 				var key = str(current_chunk.x+x)+":"+str(current_chunk.y+y)+":"+str(current_chunk.z+z)
 				if not chunk_dict.has(key):
 					var offset = Vector3(current_chunk.x+x, current_chunk.y+y, current_chunk.z+z)
@@ -117,16 +117,9 @@ func _on_Timer_timeout():
 	for key in chunk_dict.keys():
 		var chunk = chunk_dict.get(key)
 
-		if not chunk.initialized:
+		if not chunk.clean || not chunk.initialized:
 			clean_run = false
-
-		if not chunk.clean:
-			logMessage("chunk: " + str(key) + " not clean")
-			clean_run = false
-			var thread = threadpool.get_thread()
-			if(thread == null):
-				return;
-			chunk.render(thread)
+			_render_chunk_threaded(key, chunk)
 
 	if clean_run:
 		if !world_ready:
@@ -135,3 +128,15 @@ func _on_Timer_timeout():
 			player.start()
 
 
+func _render_chunk(key, chunk):
+	logMessage("_render_chunk chunk: " + str(key))
+	var thread = null
+	chunk._render_mesh_thread(thread)
+	chunk.clean = true
+
+func _render_chunk_threaded(key, chunk):
+	var thread = threadpool.get_thread()
+	if(thread == null):
+		return;
+	logMessage("_render_chunk_threaded chunk: " + str(key))
+	chunk.render(thread)

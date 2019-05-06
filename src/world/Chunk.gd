@@ -105,14 +105,24 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 func render(_thread):
 	if thread == null && not _thread.is_active():
 		thread = _thread
-		clean = true
 		thread.start(self, "_render_mesh_thread", {}, 2)
 
-func renderEnd():
+func renderEnd(mesh):
 	logMessage("renderDone wait_to_finish ")
-	thread.wait_to_finish();
+	if thread:
+		thread.wait_to_finish();
+
+
+	meshInstance.set_mesh(mesh)
+	meshInstance.create_trimesh_collision()
+	# Remove old collision mesh if present
+	var coll = meshInstance.get_children()
+	if coll.size() > 1:
+		coll[0].queue_free()
+
 	thread = null
 	initialized = true
+	clean = true
 	logMessage("renderDone end ")
 
 
@@ -229,15 +239,9 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
-	meshInstance.set_mesh(mesh)
 
-	# Remove old collision mesh if present
-	meshInstance.create_trimesh_collision()
-	var coll = meshInstance.get_children()
-	if coll.size() > 1:
-		coll[0].queue_free()
 
-	call_deferred('renderEnd')
+	call_deferred('renderEnd', mesh)
 	return;
 
 

@@ -13,13 +13,10 @@ func _ready():
 		threads[i] = Thread.new()
 
 func get_thread():
-	logMessage("got request")
-
 	for key in threads.keys():
 		var thread = threads.get(key)
 		if not thread.is_active():
 			logMessage("giving thread: " + str(key))
 			return thread;
 
-	logMessage("no thread available")
 	return null;
