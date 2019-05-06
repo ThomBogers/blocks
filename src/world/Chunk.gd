@@ -352,7 +352,6 @@ func _get_vertical_x(x,z,y, current_type, next_type):
 	if should_ret:
 		return null
 
-	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
@@ -385,7 +384,6 @@ func _get_vertical_z(x,z,y, current_type, next_type):
 	if should_ret:
 		return null
 
-	# This z compensation is strange
 	var yoff_top = (y) * cubesize
 	var yoff_bot = (y-1)*cubesize
 
