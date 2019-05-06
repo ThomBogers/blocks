@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://src/player/Player.gd" type="Script" id=1]
-[ext_resource path="res://images/raw/croshair.png" type="Texture" id=2]
-[ext_resource path="res://src/player/Crosshair.gd" type="Script" id=3]
-[ext_resource path="res://src/player/Camera.gd" type="Script" id=4]
-[ext_resource path="res://src/player/FPS.gd" type="Script" id=5]
+[ext_resource path="res://src/player/Camera.gd" type="Script" id=2]
+[ext_resource path="res://src/player/FPS.gd" type="Script" id=3]
+[ext_resource path="res://images/raw/croshair.png" type="Texture" id=4]
+[ext_resource path="res://src/player/Crosshair.gd" type="Script" id=5]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.4
@@ -31,29 +31,33 @@ transform = Transform( 16, 0, 0, 0, 16, 0, 0, 0, 16, 0, 0, 0 )
 mesh = SubResource( 2 )
 material/0 = SubResource( 3 )
 
-[node name="Crosshair" type="TextureRect" parent="."]
-visible = false
-margin_right = 217.0
-margin_bottom = 217.0
-rect_scale = Vector2( 0.25, 0.25 )
-mouse_filter = 2
-texture = ExtResource( 2 )
-expand = true
-script = ExtResource( 3 )
-
 [node name="Camera" type="InterpolatedCamera" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 0 )
 fov = 90.0
 far = 4800.0
 target = NodePath("..")
-script = ExtResource( 4 )
-
-[node name="FPS" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
-script = ExtResource( 5 )
+script = ExtResource( 2 )
 
 [node name="Light" type="OmniLight" parent="."]
 light_color = Color( 0.870588, 0.580392, 0.0313726, 1 )
 omni_range = 99.0
+
+[node name="InGameUI" type="Control" parent="."]
+visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="FPS" type="Label" parent="InGameUI"]
+margin_right = 40.0
+margin_bottom = 14.0
+script = ExtResource( 3 )
+
+[node name="Crosshair" type="TextureRect" parent="InGameUI"]
+margin_right = 217.0
+margin_bottom = 217.0
+rect_scale = Vector2( 0.25, 0.25 )
+mouse_filter = 2
+texture = ExtResource( 4 )
+expand = true
+script = ExtResource( 5 )
 

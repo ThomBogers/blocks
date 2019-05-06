@@ -16,7 +16,8 @@ onready var camera = get_node("Camera")
 onready var player = get_node(".")
 onready var collider = get_node("PlayerCollider")
 onready var light: OmniLight = get_node("Light")
-onready var crosshair: TextureRect = get_node("Crosshair")
+
+onready var inGameUI: TextureRect = get_node("InGameUI")
 
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
@@ -40,8 +41,8 @@ func start():
 		return
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	crosshair.visible = true
-	
+	inGameUI.visible = true
+
 	logMessage("started")
 	started = true
 	# _setWalkMode()
