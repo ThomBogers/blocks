@@ -207,6 +207,13 @@ func _render_mesh_thread(params):
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
 
+				# Cube bottom if on chunk edge
+				if y == 0:
+					res = _get_horizontal(x,z,y-1, BLOCK_TYPE.AIR, current_type)
+					if res != null:
+						surfTool.add_triangle_fan(res[0],res[1], res[2])
+	
+
 				#Cube right
 				if z >= (chunk[x].size() -1):
 					next_type = BLOCK_TYPE.AIR
@@ -230,6 +237,8 @@ func _render_mesh_thread(params):
 					next_type = BLOCK_TYPE.AIR
 				else:
 					next_type = chunk[x][z][y+1]
+				
+
 				res = _get_horizontal(x,z,y, current_type, next_type)
 				if res != null:
 					surfTool.add_triangle_fan(res[0],res[1], res[2])
