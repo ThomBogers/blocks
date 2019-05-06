@@ -2,7 +2,7 @@ extends StaticBody
 
 var this = null
 
-var meshInstance = null
+onready var meshInstance = get_node("MeshInstance")
 
 export(Material) var material
 
@@ -23,6 +23,7 @@ var chunkInitialised = false
 var clean = false
 
 const COLOR_NONE = Color(0,0,0,0)
+
 var carray = PoolColorArray([COLOR_NONE,COLOR_NONE,COLOR_NONE,COLOR_NONE])
 var uvarray = []
 var varray  = []
@@ -68,7 +69,6 @@ func init(id: int, offset: Vector3, _worldseed: int):
 	this = get_node(".")
 	this.translate(chunkoffset)
 
-	meshInstance = get_node("MeshInstance")
 	worldseed = _worldseed
 
 func hit(x_pos, z_pos, y_pos, type, origin):
