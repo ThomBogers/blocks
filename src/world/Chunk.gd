@@ -248,8 +248,6 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
-
-
 	call_deferred('renderEnd', mesh)
 	return;
 

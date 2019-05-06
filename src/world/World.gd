@@ -15,7 +15,6 @@ var world_ready = false
 
 var chunk_dict = Dictionary()
 
-
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
@@ -66,11 +65,9 @@ func hit(collision, type, origin):
 
 	var key = str(x_chunk)+":"+str(y_chunk)+":"+str(z_chunk)
 
-	if chunk_dict.has(key):
-		var chunk = chunk_dict.get(key)
+	var chunk = _get_chunk(key)
+	if chunk:
 		chunk.hit(chunk_x_pos, chunk_z_pos, chunk_y_pos, type, origin)
-	else:
-		logMessage('hit, chunk not in dict')
 
 func _draw_surround():
 	var _worldseed = randi()
@@ -87,8 +84,20 @@ func _draw_surround():
 					chunk.init(id, offset, _worldseed)
 					id+=1
 					add_child(chunk)
-					chunk_dict[key] = chunk
+					chunk_dict[key] = weakref(chunk)
+					# ref_dict[key] = weakref(chunk)
 
+
+func _get_chunk(key):
+	if not chunk_dict.get(key):
+		logMessage('chunk missing from dict id: ' + str(key))
+		return
+
+	if not chunk_dict.get(key).get_ref():
+		logMessage('chunk ref free id: ' + str(key))
+		return
+
+	return chunk_dict.get(key).get_ref()
 
 func _get_player_chunk_loc():
 	var location = player.translation
@@ -104,8 +113,9 @@ func _get_player_chunk_loc():
 func _get_chunks_initialized():
 	var initialized = 0
 	for key in chunk_dict.keys():
-		var chunk = chunk_dict.get(key)
-		if chunk.initialized:
+		var chunk = _get_chunk(key)
+
+		if chunk && chunk.initialized:
 			initialized = initialized + 1
 
 	logMessage("chunk initialization status " + str(initialized) + " " + str(chunk_dict.size()) )
@@ -115,7 +125,10 @@ func _on_Timer_timeout():
 	var clean_run = true
 
 	for key in chunk_dict.keys():
-		var chunk = chunk_dict.get(key)
+		var chunk = _get_chunk(key)
+
+		if not chunk:
+			continue;
 
 		if not chunk.clean || not chunk.initialized:
 			clean_run = false
