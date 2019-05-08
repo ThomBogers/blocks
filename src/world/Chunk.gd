@@ -100,12 +100,12 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 		logMessage("collision, UNKOWN HIT TYPE: "+ str(type))
 
 	clean = false
-	var _thread = threadpool.get_thread()
+	var _thread = threadpool.get_thread(true)
 	render(_thread)
 
 
 func render(_thread):
-	if thread == null && not _thread.is_active():
+	if thread == null && _thread != null && not _thread.is_active():
 		thread = _thread
 		thread.start(self, "_render_mesh_thread", {}, 2)
 

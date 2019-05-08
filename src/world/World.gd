@@ -192,7 +192,7 @@ func _render_chunk(key, chunk):
 	chunk.clean = true
 
 func _render_chunk_threaded(key, chunk):
-	var thread = threadpool.get_thread()
+	var thread = threadpool.get_thread(false)
 	if(thread == null):
 		return;
 	logMessage("_render_chunk_threaded chunk: " + str(key))
