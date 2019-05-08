@@ -44,16 +44,20 @@ func _on_Timer_timeout():
 			
 			loadtime += timestep
 			var load_progress = _world._get_chunks_initialized()
+			var chunks_loaded = load_progress[0]
+			var chunks_total = load_progress[1]
 			
-			
-			if load_progress[0] != 0:
-				var percentage = int(float(load_progress[0])/load_progress[1]*100)
-				
-				var seconds_per_percent = (percentage / loadtime)
-				var estimated_loadtime = (100 - percentage) / seconds_per_percent
-
-				estimatedTime.set_text("Loadtime: " + str(ceil(estimated_loadtime)) + 's')
+			if chunks_loaded != 0:
+				var percentage = int(float(chunks_loaded)/chunks_total*100)
 				progressBar.value = percentage
+
+				var output_loadtime = '?'
+				if percentage > 5:
+					var seconds_per_percent = ((percentage) / loadtime)
+					var estimated_loadtime = (100 - percentage) / seconds_per_percent
+					output_loadtime = str(ceil(estimated_loadtime / 5) * 5)
+
+				estimatedTime.set_text( "Remaining time: " + str(output_loadtime) + 's ('  + str(chunks_loaded) + "/" + str(chunks_total) + ")")
 
 			if _world.world_ready:
 				logMessage("Entering game")
