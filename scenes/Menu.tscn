@@ -24,11 +24,20 @@ rect_scale = Vector2( 0.5, 0.5 )
 texture_normal = ExtResource( 3 )
 texture_pressed = ExtResource( 4 )
 
-[node name="LoadingBar" type="ProgressBar" parent="Background"]
+[node name="Loader" type="Control" parent="."]
 visible = false
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ProgressBar" type="ProgressBar" parent="Loader"]
 margin_left = 450.616
 margin_top = 347.829
 margin_right = 824.616
 margin_bottom = 375.829
 
+[node name="EstimatedTime" type="Label" parent="Loader"]
+margin_left = 451.0
+margin_top = 378.0
+margin_right = 522.0
+margin_bottom = 408.0
 [connection signal="pressed" from="Background/StartButton" to="." method="_on_StartButton_pressed"]
