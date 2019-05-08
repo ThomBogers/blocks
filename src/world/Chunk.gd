@@ -14,6 +14,7 @@ var CONSTANTS = load("res://src/util/constants.gd")
 onready var threadpool = get_node("../../Threadpool")
 
 var chunkoffset = Vector3(0,0,0)
+var offset
 var chunkId = 0
 
 var cubesize
@@ -60,10 +61,11 @@ func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
 
-func init(id: int, offset: Vector3, _worldseed: int):
+func init(id: int, _offset: Vector3, _worldseed: int):
 	cubesize = CONSTANTS.CUBESIZE
 	chunksize = CONSTANTS.CHUNKSIZE
 
+	offset = _offset
 	chunkId = id
 	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, offset.y*chunksize.y*cubesize, offset.z*chunksize.z*cubesize)
 	this = get_node(".")
@@ -113,12 +115,13 @@ func renderEnd(mesh):
 		thread.wait_to_finish();
 
 
-	meshInstance.set_mesh(mesh)
-	meshInstance.create_trimesh_collision()
-	# Remove old collision mesh if present
-	var coll = meshInstance.get_children()
-	if coll.size() > 1:
-		coll[0].queue_free()
+	if mesh:
+		meshInstance.set_mesh(mesh)
+		meshInstance.create_trimesh_collision()
+		# Remove old collision mesh if present
+		var coll = meshInstance.get_children()
+		if coll.size() > 1:
+			coll[0].queue_free()
 
 	thread = null
 	initialized = true

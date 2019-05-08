@@ -15,6 +15,8 @@ var world_ready = false
 
 var chunk_dict = Dictionary()
 
+var _worldseed = randi()
+
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
@@ -38,7 +40,7 @@ func _ready():
 		)
 	)
 
-	_draw_surround()
+	# _draw_surround()
 	pass
 
 func hit(collision, type, origin):
@@ -70,23 +72,63 @@ func hit(collision, type, origin):
 		chunk.hit(chunk_x_pos, chunk_z_pos, chunk_y_pos, type, origin)
 
 func _draw_surround():
-	var _worldseed = randi()
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
 
-	for x in range(floor(-CONSTANTS.WORLDSIZE.x/2), ceil(CONSTANTS.WORLDSIZE.x/2)):
-		for z in range(floor(-CONSTANTS.WORLDSIZE.z/2), ceil(CONSTANTS.WORLDSIZE.z/2)):
-			for y in range(floor(-CONSTANTS.WORLDSIZE.y/2),ceil(CONSTANTS.WORLDSIZE.y/2)):
-				var key = str(current_chunk.x+x)+":"+str(current_chunk.y+y)+":"+str(current_chunk.z+z)
+
+	var x_start = current_chunk.x + floor(-CONSTANTS.WORLDSIZE.x/2)
+	var x_end = current_chunk.x + ceil(CONSTANTS.WORLDSIZE.x/2)
+
+	var z_start = current_chunk.z + floor(-CONSTANTS.WORLDSIZE.z/2)
+	var z_end = current_chunk.z + ceil(CONSTANTS.WORLDSIZE.z/2)
+
+	var y_start = current_chunk.y + floor(-CONSTANTS.WORLDSIZE.y/2)
+	var y_end
+
+	if y_start < 0:
+		y_end = current_chunk.y + ceil(CONSTANTS.WORLDSIZE.y) - y_start
+	else:
+		y_end = current_chunk.y + ceil(CONSTANTS.WORLDSIZE.y)
+
+	for x in range(x_start, x_end):
+		for z in range(z_start,z_end):
+			for y in range(y_start,y_end):
+				if y < 0:
+					continue;
+
+				var key = str(x)+":"+str(y)+":"+str(z)
 				if not chunk_dict.has(key):
-					var offset = Vector3(current_chunk.x+x, current_chunk.y+y, current_chunk.z+z)
+					var offset = Vector3(x, y, z)
 					var chunk = Chunk.instance()
 					chunk.init(id, offset, _worldseed)
 					id+=1
 					add_child(chunk)
 					chunk_dict[key] = weakref(chunk)
 					# ref_dict[key] = weakref(chunk)
+	
+	var removeKeys = []
 
+	for key in chunk_dict.keys():
+		var chunk = _get_chunk(key)
+
+		if chunk.offset.x < x_start || chunk.offset.x > x_end:
+			removeKeys.append(key)
+		if chunk.offset.z < z_start || chunk.offset.z > z_end:
+			removeKeys.append(key)
+		if chunk.offset.y < y_start || chunk.offset.y > y_end:
+			removeKeys.append(key)
+	
+	for key in removeKeys:
+		_free_chunk(key)
+
+
+
+func _free_chunk(key):
+	var chunk = _get_chunk(key)
+	if chunk:
+		chunk_dict.erase(key)
+		self.remove_child(chunk)
+		chunk.call_deferred("free")
 
 func _get_chunk(key):
 	if not chunk_dict.get(key):
@@ -123,6 +165,8 @@ func _get_chunks_initialized():
 
 func _on_Timer_timeout():
 	var clean_run = true
+
+	_draw_surround()
 
 	for key in chunk_dict.keys():
 		var chunk = _get_chunk(key)
