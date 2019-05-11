@@ -20,6 +20,8 @@ onready var light: OmniLight = get_node("Light")
 onready var inGameUI: Control = get_node("InGameUI")
 onready var inGameMenu: Control = get_node("InGameMenu")
 
+onready var savestate = get_node("../../Savestate")
+
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
 var yaw   = 45
@@ -49,6 +51,13 @@ func start():
 		return
 
 	started = true
+
+	var playerstate = savestate.loadPlayerState()
+	if playerstate:
+		self.translation = playerstate.get('position')
+		self.rotation = playerstate.get('rotation')
+		camera.rotation = playerstate.get('camerarotation')
+
 	set_process_input(true)
 	_setControlModePlay()
 	_setWalkMode()
@@ -85,7 +94,6 @@ func _setControlModePlay():
 func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
-	pass
 
 func _input(event):
 	if event.is_action_pressed("game_quit"):
@@ -102,6 +110,7 @@ func _handleMenuModeInput(event):
 
 func _on_saveState_pressed():
 	logMessage("Save state!")
+	savestate.savePlayerState(self.translation, self.rotation, camera.rotation);
 
 func _handlePlayModeInput(event):
 
