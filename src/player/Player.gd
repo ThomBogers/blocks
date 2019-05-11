@@ -17,7 +17,8 @@ onready var player = get_node(".")
 onready var collider = get_node("PlayerCollider")
 onready var light: OmniLight = get_node("Light")
 
-onready var inGameUI: TextureRect = get_node("InGameUI")
+onready var inGameUI: Control = get_node("InGameUI")
+onready var inGameMenu: Control = get_node("InGameMenu")
 
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
@@ -32,6 +33,13 @@ var cameraOffset = Vector3(0,0,0);
 
 var started = false
 
+enum ControlMode {
+	play,
+	menu,
+}
+
+var currentControlMode
+
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
@@ -40,12 +48,11 @@ func start():
 	if started:
 		return
 
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	inGameUI.visible = true
-
-	logMessage("started")
 	started = true
+	set_process_input(true)
+	_setControlModePlay()
 	_setWalkMode()
+	logMessage("started")
 
 func _setWalkMode():
 	logMessage("switching to walk mode")
@@ -60,25 +67,46 @@ func _setFlyMode():
 	player.set_collision_layer_bit(0,0)
 	player.set_collision_mask_bit(0,0)
 
-func _ready():
+func _setControlModeMenu():
+	logMessage("switching to control mode: menu")
+	currentControlMode = ControlMode.menu
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	inGameUI.visible = false
+	inGameMenu.visible = true
+
+func _setControlModePlay():
+	logMessage("switching to control mode: play")
+	currentControlMode = ControlMode.play
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	inGameUI.visible = true
+	inGameMenu.visible = false
 
+func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
-
-	# Enable processing input
-	set_process_input(true)
-
 	pass
 
 func _input(event):
-
-	if !started:
-		return
-
 	if event.is_action_pressed("game_quit"):
 		get_tree().quit()
+
+	if currentControlMode == ControlMode.play:
+		_handlePlayModeInput(event)
+	elif currentControlMode == ControlMode.menu:
+		_handleMenuModeInput(event)
+
+func _handleMenuModeInput(event):
+	if event.is_action_pressed("escape"):
+		_setControlModePlay();
+
+func _on_Button_pressed():
+	logMessage("The button does do 'something'")
+
+func _handlePlayModeInput(event):
+
+	if event.is_action_pressed("escape"):
+		_setControlModeMenu();
 
 	if event.is_action_pressed("zoom_in"):
 		cameraOffset.z = cameraOffset.z - 10;
@@ -179,5 +207,4 @@ func _physics_process(delta):
 		if collision.normal.y == 1:
 			jumps=0
 			movement_vector.y = 0
-
 

@@ -2,8 +2,13 @@
 
 [ext_resource path="res://src/UI/Menu.gd" type="Script" id=1]
 [ext_resource path="res://images/raw/UI/background.png" type="Texture" id=2]
-[ext_resource path="res://images/raw/UI/start_button.png" type="Texture" id=3]
-[ext_resource path="res://images/raw/UI/start_button_pressed.png" type="Texture" id=4]
+
+[sub_resource type="DynamicFontData" id=1]
+font_path = "res://fonts/BebasNeueBold.ttf"
+
+[sub_resource type="DynamicFont" id=2]
+size = 100
+font_data = SubResource( 1 )
 
 [node name="Menu" type="Control"]
 anchor_right = 1.0
@@ -15,14 +20,15 @@ margin_right = 1279.0
 margin_bottom = 721.0
 texture = ExtResource( 2 )
 
-[node name="StartButton" type="TextureButton" parent="Background"]
-margin_left = 977.391
-margin_top = 553.749
-margin_right = 1489.39
-margin_bottom = 809.749
-rect_scale = Vector2( 0.5, 0.5 )
-texture_normal = ExtResource( 3 )
-texture_pressed = ExtResource( 4 )
+[node name="StartButton" type="Button" parent="Background"]
+margin_left = 985.88
+margin_top = 603.668
+margin_right = 1257.88
+margin_bottom = 709.668
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 0, 0, 0, 1 )
+text = "Start"
 
 [node name="Loader" type="Control" parent="."]
 visible = false
@@ -38,6 +44,7 @@ margin_bottom = 375.829
 [node name="EstimatedTime" type="Label" parent="Loader"]
 margin_left = 451.0
 margin_top = 378.0
-margin_right = 522.0
-margin_bottom = 408.0
+margin_right = 823.0
+margin_bottom = 398.0
+
 [connection signal="pressed" from="Background/StartButton" to="." method="_on_StartButton_pressed"]

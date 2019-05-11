@@ -41,12 +41,12 @@ func _on_Timer_timeout():
 
 		var _world = _game.get_node("./World")
 		if _world != null:
-			
+
 			loadtime += timestep
 			var load_progress = _world._get_chunks_initialized()
 			var chunks_loaded = load_progress[0]
 			var chunks_total = load_progress[1]
-			
+
 			if chunks_loaded != 0:
 				var percentage = int(float(chunks_loaded)/chunks_total*100)
 				progressBar.value = percentage
