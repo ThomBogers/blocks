@@ -14,6 +14,7 @@ var CONSTANTS = load("res://src/util/constants.gd")
 onready var threadpool = get_node("../../Threadpool")
 
 var chunkoffset = Vector3(0,0,0)
+var offset
 var chunkId = 0
 
 var cubesize
@@ -60,10 +61,11 @@ func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
 	print( name, ": ", message)
 
-func init(id: int, offset: Vector3, _worldseed: int):
+func init(id: int, _offset: Vector3, _worldseed: int):
 	cubesize = CONSTANTS.CUBESIZE
 	chunksize = CONSTANTS.CHUNKSIZE
 
+	offset = _offset
 	chunkId = id
 	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, offset.y*chunksize.y*cubesize, offset.z*chunksize.z*cubesize)
 	this = get_node(".")
@@ -98,12 +100,12 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 		logMessage("collision, UNKOWN HIT TYPE: "+ str(type))
 
 	clean = false
-	var _thread = threadpool.get_thread()
+	var _thread = threadpool.get_thread(true)
 	render(_thread)
 
 
 func render(_thread):
-	if thread == null && not _thread.is_active():
+	if thread == null && _thread != null && not _thread.is_active():
 		thread = _thread
 		thread.start(self, "_render_mesh_thread", {}, 2)
 
@@ -113,12 +115,13 @@ func renderEnd(mesh):
 		thread.wait_to_finish();
 
 
-	meshInstance.set_mesh(mesh)
-	meshInstance.create_trimesh_collision()
-	# Remove old collision mesh if present
-	var coll = meshInstance.get_children()
-	if coll.size() > 1:
-		coll[0].queue_free()
+	if mesh:
+		meshInstance.set_mesh(mesh)
+		meshInstance.create_trimesh_collision()
+		# Remove old collision mesh if present
+		var coll = meshInstance.get_children()
+		if coll.size() > 1:
+			coll[0].queue_free()
 
 	thread = null
 	initialized = true
