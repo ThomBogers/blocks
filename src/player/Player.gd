@@ -100,8 +100,8 @@ func _handleMenuModeInput(event):
 	if event.is_action_pressed("escape"):
 		_setControlModePlay();
 
-func _on_Button_pressed():
-	logMessage("The button does do 'something'")
+func _on_saveState_pressed():
+	logMessage("Save state!")
 
 func _handlePlayModeInput(event):
 

@@ -62,12 +62,12 @@ margin_right = 1088.91
 margin_bottom = 621.375
 texture = ExtResource( 3 )
 
-[node name="Button" type="Button" parent="InGameMenu/Background"]
+[node name="saveState" type="Button" parent="InGameMenu/Background"]
 margin_left = 91.9477
 margin_top = 140.183
 margin_right = 171.948
 margin_bottom = 160.183
-text = "Something"
+text = "Save state"
 
 [node name="Title" type="Label" parent="InGameMenu"]
 margin_left = 838.015
@@ -97,4 +97,4 @@ texture = ExtResource( 5 )
 expand = true
 script = ExtResource( 6 )
 
-[connection signal="pressed" from="InGameMenu/Background/Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="InGameMenu/Background/saveState" to="." method="_on_saveState_pressed"]
