@@ -69,7 +69,7 @@ margin_right = 171.948
 margin_bottom = 160.183
 text = "Something"
 
-[node name="Label" type="Label" parent="InGameMenu"]
+[node name="Title" type="Label" parent="InGameMenu"]
 margin_left = 838.015
 margin_top = 134.0
 margin_right = 1185.01
