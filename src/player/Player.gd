@@ -97,9 +97,6 @@ func _ready():
 		player.set_rotation(Vector3(0,deg2rad(yaw),0 ))
 
 func _input(event):
-	if event.is_action_pressed("game_quit"):
-		get_tree().quit()
-
 	if currentControlMode == ControlMode.play:
 		_handlePlayModeInput(event)
 	elif currentControlMode == ControlMode.menu:
