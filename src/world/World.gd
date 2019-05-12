@@ -33,13 +33,6 @@ func _ready():
 	_timer.set_one_shot(false) # Make sure it loops
 	_timer.start()
 
-	player.translate(Vector3(
-		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.x/2,
-		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.y/2,
-		CONSTANTS.CUBESIZE*CONSTANTS.CHUNKSIZE.z/2
-		)
-	)
-
 	# _draw_surround()
 	pass
 

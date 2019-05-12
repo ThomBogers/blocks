@@ -51,13 +51,6 @@ func start():
 		return
 
 	started = true
-
-	var playerstate = savestate.loadPlayerState()
-	if playerstate:
-		self.translation = playerstate.get('position')
-		self.rotation = playerstate.get('rotation')
-		camera.rotation = playerstate.get('camerarotation')
-
 	set_process_input(true)
 	_setControlModePlay()
 	_setWalkMode()
@@ -94,6 +87,14 @@ func _setControlModePlay():
 func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
+	
+	var playerstate = savestate.loadPlayerState()
+	if playerstate:
+		self.translation = playerstate.get('position')
+		pitch = playerstate.get('pitch')
+		yaw = playerstate.get('yaw')
+		camera.set_rotation(Vector3(deg2rad(pitch), 0,0 ))
+		player.set_rotation(Vector3(0,deg2rad(yaw),0 ))
 
 func _input(event):
 	if event.is_action_pressed("game_quit"):
@@ -110,7 +111,7 @@ func _handleMenuModeInput(event):
 
 func _on_saveState_pressed():
 	logMessage("Save state!")
-	savestate.savePlayerState(self.translation, self.rotation, camera.rotation);
+	savestate.savePlayerState(self.translation, self.rotation, pitch, yaw);
 
 func _handlePlayModeInput(event):
 

@@ -9,12 +9,13 @@ func logMessage(message: String):
 func _ready():
     pass
 
-func savePlayerState(position, rotation, camerarotation):
-    logMessage("saving player state" + str(position) + str(rotation) + str(camerarotation))
+func savePlayerState(position, rotation, pitch, yaw):
+    logMessage("saving player state, pos: " + str(position) + " rot: " + str(rotation) + " pch: " + str(pitch) + " yaw: " + str (yaw))
     var data = {
         position = var2str(position),
         rotation = var2str(rotation),
-        camerarotation = var2str(camerarotation)
+        pitch = var2str(pitch),
+        yaw = var2str(yaw)
     }
 
     var file = File.new()
@@ -32,7 +33,8 @@ func loadPlayerState():
     var data = {
         position = null,
         rotation = null,
-        camerarotation = null
+        pitch = null,
+        yaw = null
     }
 
     var file = File.new()
