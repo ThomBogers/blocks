@@ -108,6 +108,7 @@ margin_bottom = 160.0
 text = "Save state"
 
 [node name="goToMain" type="Button" parent="World/Player/InGameMenu/Background"]
+visible = false
 margin_left = 100.0
 margin_top = 113.368
 margin_right = 175.0
