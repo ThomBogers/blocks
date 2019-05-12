@@ -1,11 +1,5 @@
 extends Spatial
 
-func _ready():
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
 
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
@@ -21,8 +15,6 @@ func _on_goToMain_pressed():
 
 	_root.remove_child(self)
 	self.call_deferred("free")
-	logMessage("goto main menu end")
-
 
 func _on_quit_pressed():
 	get_tree().quit()

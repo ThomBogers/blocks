@@ -1,5 +1,11 @@
 extends Control
 
+onready var loader = get_node("./Loader")
+onready var progressBar = get_node("./Loader/ProgressBar")
+onready var estimatedTime = get_node("./Loader/EstimatedTime")
+
+const _game_resource = preload("res://scenes/Game.tscn")
+
 var _timer = null
 var _game = null
 var _root = null
@@ -7,9 +13,6 @@ var _root = null
 var timestep = 1.0
 var loadtime = 0.0
 
-onready var loader = get_node("./Loader")
-onready var progressBar = get_node("./Loader/ProgressBar")
-onready var estimatedTime = get_node("./Loader/EstimatedTime")
 
 func logMessage(message: String):
 	var name = self.get_script().get_path().get_file().replace('.gd', '')
@@ -30,9 +33,7 @@ func _on_StartButton_pressed():
 
 	loader.visible = true
 
-	var _game_resource = load("res://scenes/Game.tscn")
 	_game = _game_resource.instance()
-
 	_root.add_child(_game)
 
 func _on_Timer_timeout():
