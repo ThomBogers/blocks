@@ -64,6 +64,12 @@ func hit(collision, type, origin):
 	if chunk:
 		chunk.hit(chunk_x_pos, chunk_z_pos, chunk_y_pos, type, origin)
 
+func _on_saveState_pressed():
+	logMessage("save world state")
+	for key in chunk_dict.keys():
+		var chunk = _get_chunk(key)
+		chunk.saveState()
+
 func _draw_surround():
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
@@ -98,7 +104,7 @@ func _draw_surround():
 					add_child(chunk)
 					chunk_dict[key] = weakref(chunk)
 					# ref_dict[key] = weakref(chunk)
-	
+
 	var removeKeys = []
 
 	for key in chunk_dict.keys():
@@ -110,7 +116,7 @@ func _draw_surround():
 			removeKeys.append(key)
 		if chunk.offset.y < y_start || chunk.offset.y > y_end:
 			removeKeys.append(key)
-	
+
 	for key in removeKeys:
 		_free_chunk(key)
 
@@ -124,7 +130,7 @@ func _free_chunk(key):
 		chunk.call_deferred("free")
 
 func _get_chunk(key):
-	if not chunk_dict.get(key):
+	if not chunk_dict.has(key):
 		logMessage('chunk missing from dict id: ' + str(key))
 		return
 
@@ -169,7 +175,7 @@ func _on_Timer_timeout():
 
 		if not chunk.clean || not chunk.initialized:
 			clean_run = false
-			_render_chunk_threaded(key, chunk)
+			_render_chunk(key, chunk)
 
 	if clean_run:
 		if !world_ready:
@@ -188,5 +194,5 @@ func _render_chunk_threaded(key, chunk):
 	var thread = threadpool.get_thread(false)
 	if(thread == null):
 		return;
-	logMessage("_render_chunk_threaded chunk: " + str(key))
+	# logMessage("_render_chunk_threaded chunk: " + str(key))
 	chunk.render(thread)

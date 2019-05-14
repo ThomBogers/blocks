@@ -33,23 +33,23 @@ dof_blur_far_transition = 100.0
 dof_blur_far_quality = 2
 glow_enabled = true
 
-[sub_resource type="CapsuleShape" id=6]
+[sub_resource type="CapsuleShape" id=3]
 radius = 0.4
 height = 16.0
 
-[sub_resource type="CapsuleMesh" id=7]
+[sub_resource type="CapsuleMesh" id=4]
 radius = 0.7
 
-[sub_resource type="SpatialMaterial" id=3]
+[sub_resource type="SpatialMaterial" id=5]
 flags_transparent = true
 roughness = 0.0
 
-[sub_resource type="DynamicFontData" id=4]
+[sub_resource type="DynamicFontData" id=6]
 font_path = "res://fonts/BebasNeueBold.ttf"
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=7]
 size = 100
-font_data = SubResource( 4 )
+font_data = SubResource( 6 )
 
 [node name="Game" type="Spatial"]
 script = ExtResource( 1 )
@@ -70,12 +70,12 @@ script = ExtResource( 3 )
 
 [node name="PlayerCollider" type="CollisionShape" parent="World/Player"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-008, -1, 0, 1, -4.37114e-008, 0, 0, 0 )
-shape = SubResource( 6 )
+shape = SubResource( 3 )
 
 [node name="MeshInstance" type="MeshInstance" parent="World/Player/PlayerCollider"]
 transform = Transform( 16, 0, 0, 0, 16, 0, 0, 0, 16, 0, 0, 0 )
-mesh = SubResource( 7 )
-material/0 = SubResource( 3 )
+mesh = SubResource( 4 )
+material/0 = SubResource( 5 )
 
 [node name="Camera" type="InterpolatedCamera" parent="World/Player"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16, 0 )
@@ -100,12 +100,19 @@ margin_right = 1088.91
 margin_bottom = 621.375
 texture = ExtResource( 5 )
 
-[node name="saveState" type="Button" parent="World/Player/InGameMenu/Background"]
+[node name="saveWorldState" type="Button" parent="World/Player/InGameMenu/Background"]
+margin_left = 100.204
+margin_top = 165.427
+margin_right = 220.204
+margin_bottom = 185.427
+text = "Save world state"
+
+[node name="savePlayerState" type="Button" parent="World/Player/InGameMenu/Background"]
 margin_left = 100.0
 margin_top = 140.0
 margin_right = 175.0
 margin_bottom = 160.0
-text = "Save state"
+text = "Save player state"
 
 [node name="goToMain" type="Button" parent="World/Player/InGameMenu/Background"]
 visible = false
@@ -127,7 +134,7 @@ margin_left = 838.015
 margin_top = 134.0
 margin_right = 1185.01
 margin_bottom = 285.0
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Blocks"
 
@@ -162,6 +169,7 @@ script = ExtResource( 9 )
 [node name="Savestate" type="Node" parent="."]
 script = ExtResource( 10 )
 
-[connection signal="pressed" from="World/Player/InGameMenu/Background/saveState" to="World/Player" method="_on_saveState_pressed"]
+[connection signal="pressed" from="World/Player/InGameMenu/Background/saveWorldState" to="World" method="_on_saveState_pressed"]
+[connection signal="pressed" from="World/Player/InGameMenu/Background/savePlayerState" to="World/Player" method="_on_saveState_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/goToMain" to="." method="_on_goToMain_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/quit" to="." method="_on_quit_pressed"]
