@@ -10,3 +10,6 @@ export_presets.cfg
 .directory
 .vs
 *~
+
+# Project specifig ignores
+user/*.sav

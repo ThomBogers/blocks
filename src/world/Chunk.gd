@@ -12,6 +12,7 @@ var EQUIPMENT = load("res://src/player/Equipment.gd")
 var CONSTANTS = load("res://src/util/constants.gd")
 
 onready var threadpool = get_node("../../Threadpool")
+onready var persistentState = get_node("../../PersistentState")
 
 var chunkoffset = Vector3(0,0,0)
 var offset
@@ -41,6 +42,8 @@ var worldseed
 var thread
 var initialized
 
+var diff = Dictionary()
+
 # type dict for checking noise distribution
 var type_dict = Dictionary()
 
@@ -58,8 +61,11 @@ enum BLOCK_SIDE {
 }
 
 func logMessage(message: String):
-	var name = self.get_script().get_path().get_file().replace('.gd', '')
+	var name = self.get_script().get_path().get_file().replace('.gd', '') + " " + getName()
 	print( name, ": ", message)
+
+func getName():
+	return str(offset.x) + "_" + str(offset.z) + "_" + str(offset.y)
 
 func init(id: int, _offset: Vector3, _worldseed: int):
 	cubesize = CONSTANTS.CUBESIZE
@@ -72,6 +78,11 @@ func init(id: int, _offset: Vector3, _worldseed: int):
 	this.translate(chunkoffset)
 
 	worldseed = _worldseed
+
+func saveState():
+	if(diff.size() > 0):
+		logMessage("save chunk")
+		persistentState.saveChunkState(getName(), diff)
 
 func hit(x_pos, z_pos, y_pos, type, origin):
 	logMessage("collision, X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos) )
@@ -91,13 +102,18 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 
 	if chunk[x_pos][z_pos][y_pos] == BLOCK_TYPE.BEDROCK:
 		return
-
+	var change
 	if type == EQUIPMENT.TYPES.ARM:
-		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.AIR
+		change = BLOCK_TYPE.AIR
+
 	elif type == EQUIPMENT.TYPES.DIRT:
-		chunk[x_pos][z_pos][y_pos] = BLOCK_TYPE.DIRT
+		change = BLOCK_TYPE.DIRT
 	else:
 		logMessage("collision, UNKOWN HIT TYPE: "+ str(type))
+		return
+
+	chunk[x_pos][z_pos][y_pos] = change
+	diff[str(x_pos) + "_" + str(z_pos) + "_" + str(y_pos)] = change
 
 	clean = false
 	var _thread = threadpool.get_thread(true)
@@ -107,29 +123,32 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 func render(_thread):
 	if thread == null && _thread != null && not _thread.is_active():
 		thread = _thread
-		thread.start(self, "_render_mesh_thread", {}, 2)
+		thread.start(self, "_render_mesh_thread", {chunkDiff = diff}, 2)
 
-func renderEnd(mesh):
-	logMessage("renderDone wait_to_finish ")
+func renderEnd(data):
+	# logMessage("renderDone wait_to_finish ")
 	if thread:
 		thread.wait_to_finish();
 
 
-	if mesh:
-		meshInstance.set_mesh(mesh)
+	if data && data.mesh:
+		meshInstance.set_mesh(data.mesh)
 		meshInstance.create_trimesh_collision()
 		# Remove old collision mesh if present
 		var coll = meshInstance.get_children()
 		if coll.size() > 1:
 			coll[0].queue_free()
 
+	if data && data.diff:
+		diff = data.diff
+
 	thread = null
 	initialized = true
 	clean = true
-	logMessage("renderDone end ")
+	# logMessage("renderDone end ")
 
 
-func _build_chunk_opensimplex_3d():
+func _build_chunk_opensimplex_3d(chunkDiff):
 	noise.seed = worldseed
 	noise.lacunarity = 2
 	noise.octaves = 4
@@ -146,7 +165,12 @@ func _build_chunk_opensimplex_3d():
 				var cube_z = (chunkoffset.z/cubesize) + z
 				var cube_y = (chunkoffset.y/cubesize) + y
 
-				if cube_y == 0:
+				if chunkDiff and chunkDiff.has(str(x) + "_" + str(z) + "_" + str(y)):
+					var val = chunkDiff.get(str(x) + "_" + str(z) + "_" + str(y))
+					logMessage("DIFF key: " +  str(x) + "_" + str(z) + "_" + str(y) + " value: " + str(val))
+					chunk[x][z].append(val)
+
+				elif cube_y == 0:
 					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
 				else:
 					var type = noise.get_noise_3d(cube_x, cube_z, cube_y)
@@ -178,8 +202,10 @@ func _print_type_dict():
 
 func _render_mesh_thread(params):
 
+	var loadDiff
 	if(!chunkInitialised):
-		_build_chunk_opensimplex_3d()
+		loadDiff = persistentState.loadChunkState(getName())
+		_build_chunk_opensimplex_3d(loadDiff)
 		chunkInitialised = true
 
 	var surfTool = SurfaceTool.new()
@@ -215,7 +241,7 @@ func _render_mesh_thread(params):
 					res = _get_horizontal(x,z,y-1, BLOCK_TYPE.AIR, current_type)
 					if res != null:
 						surfTool.add_triangle_fan(res[0],res[1], res[2])
-	
+
 
 				#Cube right
 				if z >= (chunk[x].size() -1):
@@ -240,7 +266,7 @@ func _render_mesh_thread(params):
 					next_type = BLOCK_TYPE.AIR
 				else:
 					next_type = chunk[x][z][y+1]
-				
+
 
 				res = _get_horizontal(x,z,y, current_type, next_type)
 				if res != null:
@@ -251,7 +277,7 @@ func _render_mesh_thread(params):
 	surfTool.index()
 	surfTool.commit(mesh)
 
-	call_deferred('renderEnd', mesh)
+	call_deferred('renderEnd', {mesh = mesh, diff = loadDiff})
 	return;
 
 

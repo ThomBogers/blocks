@@ -20,6 +20,8 @@ onready var light: OmniLight = get_node("Light")
 onready var inGameUI: Control = get_node("InGameUI")
 onready var inGameMenu: Control = get_node("InGameMenu")
 
+onready var persistentState = get_node("../../PersistentState")
+
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
 var yaw   = 45
@@ -85,12 +87,16 @@ func _setControlModePlay():
 func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
-	pass
+	
+	var playerstate = persistentState.loadPlayerState()
+	if playerstate:
+		self.translation = playerstate.get('position')
+		pitch = playerstate.get('pitch')
+		yaw = playerstate.get('yaw')
+		camera.set_rotation(Vector3(deg2rad(pitch), 0,0 ))
+		player.set_rotation(Vector3(0,deg2rad(yaw),0 ))
 
 func _input(event):
-	if event.is_action_pressed("game_quit"):
-		get_tree().quit()
-
 	if currentControlMode == ControlMode.play:
 		_handlePlayModeInput(event)
 	elif currentControlMode == ControlMode.menu:
@@ -100,8 +106,9 @@ func _handleMenuModeInput(event):
 	if event.is_action_pressed("escape"):
 		_setControlModePlay();
 
-func _on_Button_pressed():
-	logMessage("The button does do 'something'")
+func _on_saveState_pressed():
+	logMessage("Save state!")
+	persistentState.savePlayerState(self.translation, self.rotation, pitch, yaw);
 
 func _handlePlayModeInput(event):
 
