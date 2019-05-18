@@ -90,6 +90,7 @@ light_color = Color( 0.870588, 0.580392, 0.0313726, 1 )
 omni_range = 99.0
 
 [node name="InGameMenu" type="Control" parent="World/Player"]
+pause_mode = 2
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
@@ -129,6 +130,13 @@ margin_top = 366.0
 margin_right = 137.0
 margin_bottom = 386.0
 text = "quit"
+
+[node name="resume" type="Button" parent="World/Player/InGameMenu/Background"]
+margin_left = 100.534
+margin_top = 390.909
+margin_right = 161.534
+margin_bottom = 410.909
+text = "resume"
 
 [node name="Title" type="Label" parent="World/Player/InGameMenu"]
 margin_left = 838.015
@@ -174,3 +182,4 @@ script = ExtResource( 10 )
 [connection signal="pressed" from="World/Player/InGameMenu/Background/savePlayerState" to="World/Player" method="_on_saveState_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/goToMain" to="." method="_on_goToMain_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="World/Player/InGameMenu/Background/resume" to="World/Player" method="_setControlModePlay"]

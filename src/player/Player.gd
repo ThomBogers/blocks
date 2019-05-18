@@ -70,6 +70,7 @@ func _setFlyMode():
 	player.set_collision_mask_bit(0,0)
 
 func _setControlModeMenu():
+	get_tree().paused = true
 	logMessage("switching to control mode: menu")
 	currentControlMode = ControlMode.menu
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -77,6 +78,7 @@ func _setControlModeMenu():
 	inGameMenu.visible = true
 
 func _setControlModePlay():
+	get_tree().paused = false
 	logMessage("switching to control mode: play")
 	currentControlMode = ControlMode.play
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
