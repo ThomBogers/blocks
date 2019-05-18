@@ -29,7 +29,7 @@ func _ready():
 	add_child(_timer)
 
 	_timer.connect("timeout", self, "_on_Timer_timeout")
-	_timer.set_wait_time(.5)
+	_timer.set_wait_time(1)
 	_timer.set_one_shot(false) # Make sure it loops
 	_timer.start()
 
@@ -163,19 +163,22 @@ func _get_chunks_initialized():
 	return [initialized, chunk_dict.size()]
 
 func _on_Timer_timeout():
+	logMessage("----TIMER----")
 	var clean_run = true
 
 	_draw_surround()
 
 	for key in chunk_dict.keys():
 		var chunk = _get_chunk(key)
-
+		
 		if not chunk:
 			continue;
-
+			
 		if not chunk.clean || not chunk.initialized:
 			clean_run = false
-			_render_chunk(key, chunk)
+			var succes = _render_chunk_threaded(key, chunk)
+			if !succes:
+				break;
 
 	if clean_run:
 		if !world_ready:
@@ -189,10 +192,12 @@ func _render_chunk(key, chunk):
 	var thread = null
 	chunk._render_mesh_thread(thread)
 	chunk.clean = true
+	return true
 
 func _render_chunk_threaded(key, chunk):
 	var thread = threadpool.get_thread(false)
 	if(thread == null):
-		return;
-	# logMessage("_render_chunk_threaded chunk: " + str(key))
+		return false;
+	logMessage("_render_chunk_threaded chunk: " + str(key))
 	chunk.render(thread)
+	return true

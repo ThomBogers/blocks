@@ -20,7 +20,7 @@ onready var light: OmniLight = get_node("Light")
 onready var inGameUI: Control = get_node("InGameUI")
 onready var inGameMenu: Control = get_node("InGameMenu")
 
-onready var savestate = get_node("../../Savestate")
+onready var persistentState = get_node("../../PersistentState")
 
 var movement_vector = Vector3(0,0,0)
 var jumps = 0
@@ -88,7 +88,7 @@ func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
 	
-	var playerstate = savestate.loadPlayerState()
+	var playerstate = persistentState.loadPlayerState()
 	if playerstate:
 		self.translation = playerstate.get('position')
 		pitch = playerstate.get('pitch')
@@ -108,7 +108,7 @@ func _handleMenuModeInput(event):
 
 func _on_saveState_pressed():
 	logMessage("Save state!")
-	savestate.savePlayerState(self.translation, self.rotation, pitch, yaw);
+	persistentState.savePlayerState(self.translation, self.rotation, pitch, yaw);
 
 func _handlePlayModeInput(event):
 

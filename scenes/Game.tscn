@@ -9,7 +9,7 @@
 [ext_resource path="res://images/raw/croshair.png" type="Texture" id=7]
 [ext_resource path="res://src/player/Crosshair.gd" type="Script" id=8]
 [ext_resource path="res://src/util/threadpool.gd" type="Script" id=9]
-[ext_resource path="res://src/util/savestate.gd" type="Script" id=10]
+[ext_resource path="res://src/util/persistentstate.gd" type="Script" id=10]
 
 [sub_resource type="ProceduralSky" id=1]
 sky_top_color = Color( 0.0470588, 0.454902, 0.976471, 1 )
@@ -60,6 +60,7 @@ script = ExtResource( 1 )
 environment = SubResource( 2 )
 
 [node name="World" type="Spatial" parent="."]
+editor/display_folded = true
 script = ExtResource( 2 )
 
 [node name="Player" type="KinematicBody" parent="World"]
@@ -166,7 +167,7 @@ directional_shadow_max_distance = 100.0
 [node name="Threadpool" type="Node" parent="."]
 script = ExtResource( 9 )
 
-[node name="Savestate" type="Node" parent="."]
+[node name="PersistentState" type="Node" parent="."]
 script = ExtResource( 10 )
 
 [connection signal="pressed" from="World/Player/InGameMenu/Background/saveWorldState" to="World" method="_on_saveState_pressed"]

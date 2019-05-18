@@ -12,7 +12,7 @@ var EQUIPMENT = load("res://src/player/Equipment.gd")
 var CONSTANTS = load("res://src/util/constants.gd")
 
 onready var threadpool = get_node("../../Threadpool")
-onready var savestate = get_node("../../Savestate")
+onready var persistentState = get_node("../../PersistentState")
 
 var chunkoffset = Vector3(0,0,0)
 var offset
@@ -79,17 +79,10 @@ func init(id: int, _offset: Vector3, _worldseed: int):
 
 	worldseed = _worldseed
 
-# func _ready():
-# 	var loadDiff = savestate.loadChunkState(getName())
-# 	if loadDiff:
-# 		logMessage("got diff2 " + str(loadDiff))
-# 		logMessage("got diff2 size " + str(loadDiff.size()))
-# 		diff = loadDiff
-
 func saveState():
 	if(diff.size() > 0):
 		logMessage("save chunk")
-		savestate.saveChunkState(getName(), diff)
+		persistentState.saveChunkState(getName(), diff)
 
 func hit(x_pos, z_pos, y_pos, type, origin):
 	logMessage("collision, X: " + str(x_pos) + " Z: " + str(z_pos) + " Y: " + str(y_pos) )
@@ -211,7 +204,7 @@ func _render_mesh_thread(params):
 
 	var loadDiff
 	if(!chunkInitialised):
-		loadDiff = savestate.loadChunkState(getName())
+		loadDiff = persistentState.loadChunkState(getName())
 		_build_chunk_opensimplex_3d(loadDiff)
 		chunkInitialised = true
 
