@@ -17,8 +17,6 @@ func _ready():
 
 	camera.fov = 100
 
-	pass
-
 func set_viewport_size():
 	viewport_size = get_viewport().get_visible_rect().size
 

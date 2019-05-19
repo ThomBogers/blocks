@@ -14,8 +14,8 @@ var MODE = FLYING
 
 onready var camera = get_node("Camera")
 onready var player = get_node(".")
-onready var collider = get_node("PlayerCollider")
 onready var light: OmniLight = get_node("Light")
+onready var model = get_node("PlayerModel")
 
 onready var inGameUI: Control = get_node("InGameUI")
 onready var inGameMenu: Control = get_node("InGameMenu")
@@ -93,8 +93,9 @@ func setControlModePlay():
 	inGameMenu.visible = false
 
 func _ready():
-	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
+
+	model.visible = false
 
 	var playerstate = persistentState.loadPlayerState()
 	if playerstate:
@@ -118,11 +119,15 @@ func _handlePlayModeInput(event):
 		cameraOffset.z = cameraOffset.z - 10;
 		if cameraOffset.z < 0:
 			cameraOffset.z = 0
+		if cameraOffset.z < 20:
+			model.visible = false
 
 		camera.translation = initialCameraPosition + cameraOffset
 
 	if event.is_action_pressed("zoom_out"):
 		cameraOffset.z = cameraOffset.z + 10;
+		if cameraOffset.z > 20:
+			model.visible = true
 		if cameraOffset.z > 300:
 			cameraOffset.z = 300
 		camera.translation = initialCameraPosition + cameraOffset
