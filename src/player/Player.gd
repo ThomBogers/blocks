@@ -52,7 +52,7 @@ func start():
 
 	started = true
 	set_process_input(true)
-	_setControlModePlay()
+	setControlModePlay()
 	_setWalkMode()
 	logMessage("started")
 
@@ -69,14 +69,22 @@ func _setFlyMode():
 	player.set_collision_layer_bit(0,0)
 	player.set_collision_mask_bit(0,0)
 
-func _setControlModeMenu():
+func inControlModeMenu():
+	return currentControlMode == ControlMode.menu
+
+func inControlModePlay():
+	return currentControlMode == ControlMode.play
+
+func setControlModeMenu():
+	get_tree().paused = true
 	logMessage("switching to control mode: menu")
 	currentControlMode = ControlMode.menu
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	inGameUI.visible = false
 	inGameMenu.visible = true
 
-func _setControlModePlay():
+func setControlModePlay():
+	get_tree().paused = false
 	logMessage("switching to control mode: play")
 	currentControlMode = ControlMode.play
 	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
@@ -87,7 +95,7 @@ func _setControlModePlay():
 func _ready():
 	collider.shape.height = CONSTANTS.CUBESIZE;
 	initialCameraPosition = camera.translation
-	
+
 	var playerstate = persistentState.loadPlayerState()
 	if playerstate:
 		self.translation = playerstate.get('position')
@@ -99,21 +107,12 @@ func _ready():
 func _input(event):
 	if currentControlMode == ControlMode.play:
 		_handlePlayModeInput(event)
-	elif currentControlMode == ControlMode.menu:
-		_handleMenuModeInput(event)
-
-func _handleMenuModeInput(event):
-	if event.is_action_pressed("escape"):
-		_setControlModePlay();
 
 func _on_saveState_pressed():
 	logMessage("Save state!")
 	persistentState.savePlayerState(self.translation, self.rotation, pitch, yaw);
 
 func _handlePlayModeInput(event):
-
-	if event.is_action_pressed("escape"):
-		_setControlModeMenu();
 
 	if event.is_action_pressed("zoom_in"):
 		cameraOffset.z = cameraOffset.z - 10;
