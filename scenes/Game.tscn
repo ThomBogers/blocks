@@ -1,15 +1,16 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://src/game/Game.gd" type="Script" id=1]
 [ext_resource path="res://src/world/World.gd" type="Script" id=2]
 [ext_resource path="res://src/player/Player.gd" type="Script" id=3]
 [ext_resource path="res://src/player/Camera.gd" type="Script" id=4]
-[ext_resource path="res://images/raw/UI/menu_background.png" type="Texture" id=5]
-[ext_resource path="res://src/player/FPS.gd" type="Script" id=6]
-[ext_resource path="res://images/raw/croshair.png" type="Texture" id=7]
-[ext_resource path="res://src/player/Crosshair.gd" type="Script" id=8]
-[ext_resource path="res://src/util/threadpool.gd" type="Script" id=9]
-[ext_resource path="res://src/util/persistentstate.gd" type="Script" id=10]
+[ext_resource path="res://src/UI/InGameMenu.gd" type="Script" id=5]
+[ext_resource path="res://images/raw/UI/menu_background.png" type="Texture" id=6]
+[ext_resource path="res://src/player/FPS.gd" type="Script" id=7]
+[ext_resource path="res://images/raw/croshair.png" type="Texture" id=8]
+[ext_resource path="res://src/player/Crosshair.gd" type="Script" id=9]
+[ext_resource path="res://src/util/threadpool.gd" type="Script" id=10]
+[ext_resource path="res://src/util/persistentstate.gd" type="Script" id=11]
 
 [sub_resource type="ProceduralSky" id=1]
 sky_top_color = Color( 0.0470588, 0.454902, 0.976471, 1 )
@@ -94,13 +95,14 @@ pause_mode = 2
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
+script = ExtResource( 5 )
 
 [node name="Background" type="TextureRect" parent="World/Player/InGameMenu"]
 margin_left = 188.912
 margin_top = 121.375
 margin_right = 1088.91
 margin_bottom = 621.375
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 
 [node name="saveWorldState" type="Button" parent="World/Player/InGameMenu/Background"]
 margin_left = 100.204
@@ -155,16 +157,16 @@ margin_bottom = 40.0
 [node name="FPS" type="Label" parent="World/Player/InGameUI"]
 margin_right = 40.0
 margin_bottom = 14.0
-script = ExtResource( 6 )
+script = ExtResource( 7 )
 
 [node name="Crosshair" type="TextureRect" parent="World/Player/InGameUI"]
 margin_right = 217.0
 margin_bottom = 217.0
 rect_scale = Vector2( 0.25, 0.25 )
 mouse_filter = 2
-texture = ExtResource( 7 )
+texture = ExtResource( 8 )
 expand = true
-script = ExtResource( 8 )
+script = ExtResource( 9 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 0.707107, -0.707107, -3.09086e-008, 0, -4.37114e-008, 1, -0.707107, -0.707107, -3.09086e-008, 0, 100, 0 )
@@ -173,10 +175,10 @@ light_energy = 0.25
 directional_shadow_max_distance = 100.0
 
 [node name="Threadpool" type="Node" parent="."]
-script = ExtResource( 9 )
+script = ExtResource( 10 )
 
 [node name="PersistentState" type="Node" parent="."]
-script = ExtResource( 10 )
+script = ExtResource( 11 )
 
 [connection signal="pressed" from="World/Player/InGameMenu/Background/saveWorldState" to="World" method="_on_saveState_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/savePlayerState" to="World/Player" method="_on_saveState_pressed"]
