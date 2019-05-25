@@ -60,10 +60,14 @@ func savePlayerState(position, rotation, pitch, yaw):
 func saveChunkState(id, diff):
     var chunkLocation = savePath + "chunk_" + id + savePost
     logMessage("saving chunk state: " + chunkLocation + ' diff: ' + str(diff))
-    # var data = var2str(diff)
     _saveToFile(chunkLocation, diff)
     logMessage('saved chunk state')
 
+func saveWorldState(data):
+    var worldLocation = savePath + "saved_world" + savePost
+    logMessage("saving world state: " + worldLocation + ' data: ' + str(data))
+    _saveToFile(worldLocation, data)
+    logMessage('saved world data')
 
 func loadPlayerState():
     logMessage("Loading player state")
@@ -105,5 +109,13 @@ func loadChunkState(id):
 
     if data:
         logMessage('loaded chunk state')
+
+    return data
+
+func loadWorldState():
+    var worldLocation =  savePath + 'saved_world' + savePost
+    var data = _loadFromFile(worldLocation)
+    if data:
+        logMessage('loaded world state')
 
     return data

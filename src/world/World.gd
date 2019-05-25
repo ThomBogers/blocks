@@ -5,6 +5,7 @@ extends Spatial
 # var b = "textvar"
 onready var player = get_node("./Player")
 onready var threadpool = get_node("../Threadpool")
+onready var persistentState = get_node("../PersistentState")
 
 var CONSTANTS = load("res://src/util/constants.gd")
 var EQUIPMENT = load("res://src/player/Equipment.gd")
@@ -13,6 +14,7 @@ var Chunk = preload("res://scenes/Chunk.tscn")
 var _timer = null
 var world_ready = false
 
+var world_shape = Dictionary()
 var chunk_dict = Dictionary()
 
 var _worldseed = randi()
@@ -27,6 +29,11 @@ func _ready():
 	logMessage("start")
 	_timer = Timer.new()
 	add_child(_timer)
+
+	var world_state = persistentState.loadWorldState();
+	if world_state:
+		world_shape = world_state
+	logMessage(str(world_shape));
 
 	_timer.connect("timeout", self, "_on_Timer_timeout")
 	_timer.set_wait_time(1)
@@ -70,6 +77,15 @@ func _on_saveState_pressed():
 		var chunk = _get_chunk(key)
 		chunk.saveState()
 
+func _on_addChunkToWorld_pressed():
+	var current_chunk = _get_player_chunk_loc()
+	var key = str(current_chunk.x)+":"+str(current_chunk.y)+":"+str(current_chunk.z)
+
+	logMessage('adding chunk to world ' + str(key))
+	world_shape[key] = 1
+	persistentState.saveWorldState(world_shape)
+
+
 func _draw_surround():
 	var current_chunk = _get_player_chunk_loc()
 	var id = 0
@@ -96,6 +112,9 @@ func _draw_surround():
 					continue;
 
 				var key = str(x)+":"+str(y)+":"+str(z)
+				if not world_shape.has(key):
+					continue;
+
 				if not chunk_dict.has(key):
 					var offset = Vector3(x, y, z)
 					var chunk = Chunk.instance()
@@ -170,10 +189,10 @@ func _on_Timer_timeout():
 
 	for key in chunk_dict.keys():
 		var chunk = _get_chunk(key)
-		
+
 		if not chunk:
 			continue;
-			
+
 		if not chunk.clean || not chunk.initialized:
 			clean_run = false
 			var succes = _render_chunk_threaded(key, chunk)

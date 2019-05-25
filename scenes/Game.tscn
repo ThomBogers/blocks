@@ -13,8 +13,6 @@
 [ext_resource path="res://src/util/threadpool.gd" type="Script" id=11]
 [ext_resource path="res://src/util/persistentstate.gd" type="Script" id=12]
 
-
-
 [sub_resource type="ProceduralSky" id=1]
 sky_top_color = Color( 0.0470588, 0.454902, 0.976471, 1 )
 sky_horizon_color = Color( 0.556863, 0.823529, 0.909804, 1 )
@@ -103,7 +101,6 @@ omni_range = 99.0
 
 [node name="InGameMenu" type="Control" parent="World/Player"]
 pause_mode = 2
-editor/display_folded = true
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
@@ -116,12 +113,12 @@ margin_right = 1088.91
 margin_bottom = 621.375
 texture = ExtResource( 7 )
 
-[node name="saveWorldState" type="Button" parent="World/Player/InGameMenu/Background"]
+[node name="saveChunkState" type="Button" parent="World/Player/InGameMenu/Background"]
 margin_left = 100.204
 margin_top = 165.427
 margin_right = 220.204
 margin_bottom = 185.427
-text = "Save world state"
+text = "Save chunk state"
 
 [node name="savePlayerState" type="Button" parent="World/Player/InGameMenu/Background"]
 margin_left = 100.0
@@ -129,6 +126,13 @@ margin_top = 140.0
 margin_right = 175.0
 margin_bottom = 160.0
 text = "Save player state"
+
+[node name="addChunkToWorld" type="Button" parent="World/Player/InGameMenu/Background"]
+margin_left = 98.8
+margin_top = 191.9
+margin_right = 231.8
+margin_bottom = 211.9
+text = "add chunk to world"
 
 [node name="goToMain" type="Button" parent="World/Player/InGameMenu/Background"]
 visible = false
@@ -193,8 +197,9 @@ script = ExtResource( 11 )
 [node name="PersistentState" type="Node" parent="."]
 script = ExtResource( 12 )
 
-[connection signal="pressed" from="World/Player/InGameMenu/Background/saveWorldState" to="World" method="_on_saveState_pressed"]
+[connection signal="pressed" from="World/Player/InGameMenu/Background/saveChunkState" to="World" method="_on_saveState_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/savePlayerState" to="World/Player" method="_on_saveState_pressed"]
+[connection signal="pressed" from="World/Player/InGameMenu/Background/addChunkToWorld" to="World" method="_on_addChunkToWorld_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/goToMain" to="." method="_on_goToMain_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="World/Player/InGameMenu/Background/resume" to="World/Player" method="_setControlModePlay"]
