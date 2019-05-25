@@ -1,6 +1,6 @@
 extends StaticBody
 
-var this = null
+var Wall = preload("res://scenes/Wall.tscn")
 
 onready var meshInstance = get_node("MeshInstance")
 
@@ -67,15 +67,15 @@ func logMessage(message: String):
 func getName():
 	return str(offset.x) + "_" + str(offset.z) + "_" + str(offset.y)
 
-func init(id: int, _offset: Vector3, _worldseed: int):
+func init(id: int, _offset: Vector3, _worldseed: int, walls):
 	cubesize = CONSTANTS.CUBESIZE
 	chunksize = CONSTANTS.CHUNKSIZE
 
 	offset = _offset
 	chunkId = id
 	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, offset.y*chunksize.y*cubesize, offset.z*chunksize.z*cubesize)
-	this = get_node(".")
-	this.translate(chunkoffset)
+	self.translate(chunkoffset)
+	_addWalls(walls)
 
 	worldseed = _worldseed
 
@@ -118,6 +118,19 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 	clean = false
 	var _thread = threadpool.get_thread(true)
 	render(_thread)
+
+func _addWalls(walls):
+	logMessage('walls ' + str(walls))
+
+	for key in walls.keys():
+		var hasWall = walls.get(key)
+		if not hasWall:
+			continue;
+
+		logMessage("adding wall instance")
+		var wall = Wall.instance()
+		wall.translate(chunkoffset)
+		add_child(wall)
 
 
 func render(_thread):

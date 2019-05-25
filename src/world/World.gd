@@ -116,9 +116,10 @@ func _draw_surround():
 					continue;
 
 				if not chunk_dict.has(key):
+					var walls = _get_chunk_walls(x,y,z)
 					var offset = Vector3(x, y, z)
 					var chunk = Chunk.instance()
-					chunk.init(id, offset, _worldseed)
+					chunk.init(id, offset, _worldseed, walls)
 					id+=1
 					add_child(chunk)
 					chunk_dict[key] = weakref(chunk)
@@ -138,6 +139,26 @@ func _draw_surround():
 
 	for key in removeKeys:
 		_free_chunk(key)
+
+func _get_chunk_walls(x,y,z):
+
+	var top_key = str(x)+":"+str(y+1)+":"+str(z)
+	var bot_key = str(x)+":"+str(y-1)+":"+str(z)
+
+	var left_key  = str(x-1)+":"+str(y)+":"+str(z)
+	var right_key = str(x+1)+":"+str(y)+":"+str(z)
+
+	var front_key = str(x-1)+":"+str(y)+":"+str(z)
+	var back_key  = str(x+1)+":"+str(y)+":"+str(z)
+
+	return {
+		top = not world_shape.has(top_key),
+		bot = not world_shape.has(bot_key),
+		left = not world_shape.has(left_key),
+		right = not world_shape.has(right_key),
+		front = not world_shape.has(front_key),
+		back = not world_shape.has(back_key),
+	}
 
 
 
