@@ -1,5 +1,7 @@
 extends Node
 
+var CONSTANTS = load("res://src/util/constants.gd")
+
 var threads = Dictionary()
 
 var thread_count = 0
@@ -13,7 +15,7 @@ func logMessage(message: String):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	thread_count = floor(OS.get_processor_count() * 0.8)
+	thread_count = floor(OS.get_processor_count() * CONSTANTS.THREADPER)
 	if thread_count < 1:
 		thread_count = 1
 	else:

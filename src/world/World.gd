@@ -148,8 +148,8 @@ func _get_chunk_walls(x,y,z):
 	var left_key  = str(x-1)+":"+str(y)+":"+str(z)
 	var right_key = str(x+1)+":"+str(y)+":"+str(z)
 
-	var front_key = str(x-1)+":"+str(y)+":"+str(z)
-	var back_key  = str(x+1)+":"+str(y)+":"+str(z)
+	var front_key = str(x)+":"+str(y)+":"+str(z+1)
+	var back_key  = str(x)+":"+str(y)+":"+str(z-1)
 
 	return {
 		top = not world_shape.has(top_key),
