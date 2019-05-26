@@ -1,3 +1,4 @@
 const CUBESIZE    = 16
 const CHUNKSIZE   = Vector3(16, 16, 16)
-const WORLDSIZE = Vector3(5, 5, 5)
+const WORLDSIZE = Vector3(10, 10, 10)
+const THREADPER = 0.6

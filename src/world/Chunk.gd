@@ -1,7 +1,5 @@
 extends StaticBody
 
-var this = null
-
 onready var meshInstance = get_node("MeshInstance")
 
 export(Material) var material
@@ -17,6 +15,8 @@ onready var persistentState = get_node("../../PersistentState")
 var chunkoffset = Vector3(0,0,0)
 var offset
 var chunkId = 0
+
+var walls
 
 var cubesize
 var chunksize
@@ -67,15 +67,15 @@ func logMessage(message: String):
 func getName():
 	return str(offset.x) + "_" + str(offset.z) + "_" + str(offset.y)
 
-func init(id: int, _offset: Vector3, _worldseed: int):
+func init(id: int, _offset: Vector3, _worldseed: int, _walls):
 	cubesize = CONSTANTS.CUBESIZE
 	chunksize = CONSTANTS.CHUNKSIZE
 
 	offset = _offset
 	chunkId = id
 	chunkoffset = Vector3(offset.x*chunksize.x*cubesize, offset.y*chunksize.y*cubesize, offset.z*chunksize.z*cubesize)
-	this = get_node(".")
-	this.translate(chunkoffset)
+	self.translate(chunkoffset)
+	walls = _walls
 
 	worldseed = _worldseed
 
@@ -118,7 +118,6 @@ func hit(x_pos, z_pos, y_pos, type, origin):
 	clean = false
 	var _thread = threadpool.get_thread(true)
 	render(_thread)
-
 
 func render(_thread):
 	if thread == null && _thread != null && not _thread.is_active():
@@ -170,7 +169,17 @@ func _build_chunk_opensimplex_3d(chunkDiff):
 					logMessage("DIFF key: " +  str(x) + "_" + str(z) + "_" + str(y) + " value: " + str(val))
 					chunk[x][z].append(val)
 
-				elif cube_y == 0:
+				elif y == 0 && walls.get('bot') == true:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif y == (chunksize.y - 1) && walls.get('top') == true:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif x == 0 && walls.get('left') == true:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif x == (chunksize.x - 1) && walls.get('right') == true:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif z == 0 && walls.get('back') == true:
+					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
+				elif z == (chunksize.z - 1) && walls.get('front') == true:
 					chunk[x][z].append(BLOCK_TYPE.BEDROCK)
 				else:
 					var type = noise.get_noise_3d(cube_x, cube_z, cube_y)
