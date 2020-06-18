@@ -53,7 +53,7 @@ func start():
 	started = true
 	set_process_input(true)
 	setControlModePlay()
-	#_setWalkMode()
+	_setWalkMode()
 	logMessage("started")
 
 func _setWalkMode():
