@@ -4,8 +4,8 @@ var CONSTANTS = load("res://src/util/constants.gd")
 
 const GRAVITY     = -9.81
 const SPEED_JUMP = 2.45
-const SPEED_WALK = 60
-const SPEED_AIR  = 180
+var SPEED_WALK =  CONSTANTS.CUBESIZE * 6
+var SPEED_AIR  = CONSTANTS.CUBESIZE * 18
 
 const FLYING  = 0
 const WALKING = 1
@@ -53,7 +53,7 @@ func start():
 	started = true
 	set_process_input(true)
 	setControlModePlay()
-	_setWalkMode()
+	#_setWalkMode()
 	logMessage("started")
 
 func _setWalkMode():
@@ -96,6 +96,8 @@ func _ready():
 	initialCameraPosition = camera.translation
 
 	model.visible = false
+	var scale = 0.05 * CONSTANTS.CUBESIZE
+	player.scale = Vector3(scale,scale,scale)
 
 	var playerstate = persistentState.loadPlayerState()
 	if playerstate:
@@ -202,7 +204,7 @@ func _physics_process(delta):
 
 	var movement
 	if MODE == WALKING:
-		movement_vector.y = movement_vector.y + delta*GRAVITY
+		movement_vector.y = movement_vector.y + delta * GRAVITY
 		movement = movement_vector * SPEED_WALK
 	else:
 		movement = movement_vector * SPEED_AIR

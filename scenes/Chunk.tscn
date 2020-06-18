@@ -13,4 +13,3 @@ material = ExtResource( 2 )
 [node name="MeshInstance" type="MeshInstance" parent="."]
 mesh = SubResource( 1 )
 material/0 = null
-
