@@ -46,5 +46,4 @@ margin_left = 451.0
 margin_top = 378.0
 margin_right = 823.0
 margin_bottom = 398.0
-
 [connection signal="pressed" from="Background/StartButton" to="." method="_on_StartButton_pressed"]
